@@ -3,8 +3,9 @@ import React from "react";
 import Header from "../components/Header";
 import SearchInput from "../components/SearchInput";
 import ListMessage from "../components/ListMessage";
+import { HomeScreenTypes } from "../router";
 
-const Home = () => {
+const Home = ({ navigation }: HomeScreenTypes) => {
     return (
         <View style={styles.page}>
             <StatusBar backgroundColor="white" barStyle="dark-content" />
@@ -18,7 +19,13 @@ const Home = () => {
                     )}
                     data={[1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 12, 123, 123123, 12312, 213]}
                     renderItem={({ }) => (
-                        <ListMessage />
+                        <ListMessage
+                            name="Adhri"
+                            message="Lorem, ipsum dolor sit amet consectetur adipisicing elit. Sed nobis delectus error optio velit mollitia iste debitis"
+                            time="10.10"
+                            isNewMessage={false}
+                            onPress={() => navigation.navigate('ChatRoom')}
+                        />
                     )}
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={{ paddingBottom: 10 }}

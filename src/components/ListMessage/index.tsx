@@ -1,22 +1,34 @@
 import React from "react";
 import { View, Text, StyleSheet, Pressable, Image } from "react-native";
-import { colors, fonts } from "../assets/theme";
+import { colors, fonts } from "../../assets/theme";
 
-const ListMessage = () => {
+type ListMessageTypes = {
+    name: string;
+    message: string;
+    time: string;
+    isNewMessage?: boolean;
+    countNewMessage?: number;
+    onPress?: () => void;
+}
+
+const ListMessage = (props: ListMessageTypes) => {
+    const { name, message, time, isNewMessage = false, countNewMessage, onPress } = props;
     return (
-        <View style={styles.container}>
+        <Pressable onPress={onPress} style={styles.container}>
             <Image source={{ uri: 'https://i.pravatar.cc/300' }} style={styles.avatar} />
             <View style={{ flex: 1 }}>
-                <Text style={styles.name} numberOfLines={1}>Adhri</Text>
-                <Text style={styles.message} numberOfLines={1}>Halo apa kabar semua</Text>
+                <Text style={styles.name} numberOfLines={1}>{name}</Text>
+                <Text style={[styles.message, { fontFamily: isNewMessage ? fonts.bold : fonts.normal }]} numberOfLines={1}>{message}</Text>
             </View>
-            <View style={{ marginLeft: 10 }}>
-                <Text style={styles.time}>10.11</Text>
-                <View style={styles.newMessage}>
-                    <Text style={styles.textNewMessage}>1</Text>
-                </View>
+            <View style={{ marginLeft: 10, justifyContent: 'space-between' }}>
+                <Text style={styles.time}>{time}</Text>
+                {isNewMessage ? (
+                    <View style={styles.newMessage}>
+                        <Text style={styles.textNewMessage}>{countNewMessage}</Text>
+                    </View>
+                ) : <View style={[styles.newMessage, { backgroundColor: 'transparent' }]} />}
             </View>
-        </View>
+        </Pressable>
     );
 }
 

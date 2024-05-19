@@ -8,18 +8,23 @@ type HeaderTypes = {
     iconRight?: boolean;
     onPressNewChat?: () => void;
     onPressAvatar?: () => void;
+    fontSizeTitle?: number;
+    color?: string;
+    titleHeader?: string;
 }
 
 const Header = (props: HeaderTypes) => {
-    const { onPress, isBack = true, iconRight, onPressAvatar, onPressNewChat } = props;
+    const { onPress, isBack = true, iconRight, onPressAvatar, onPressNewChat, fontSizeTitle = 24, color = colors.primary, titleHeader } = props;
     return (
         <View style={styles.container}>
-            {isBack && (
-                <Pressable style={styles.button} onPress={onPress}>
-                    <Image source={require('../../assets/images/icon-back.png')} style={styles.image} />
-                </Pressable>
-            )}
-            <Text style={styles.title}>Econify</Text>
+            <View style={styles.buttonLeft}>
+                {isBack && (
+                    <Pressable style={styles.button} onPress={onPress}>
+                        <Image source={require('../../assets/images/icon-back.png')} style={styles.image} />
+                    </Pressable>
+                )}
+                <Text style={[styles.title, { fontSize: fontSizeTitle, color }]}>{titleHeader || 'Econify'}</Text>
+            </View>
             {iconRight && (
                 <View style={styles.buttonRight}>
                     <Pressable style={styles.icon} onPress={onPressNewChat}>
@@ -63,6 +68,10 @@ const styles = StyleSheet.create({
     buttonRight: {
         flexDirection: 'row',
         alignItems: 'center'
+    },
+    buttonLeft: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     icon: {
         width: 40,
