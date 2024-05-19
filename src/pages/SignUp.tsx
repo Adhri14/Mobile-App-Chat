@@ -25,7 +25,7 @@ const SignUp = ({ navigation }: SignUpScreenTypes) => {
 
     return (
         <View style={styles.page}>
-            <StatusBar backgroundColor="white" />
+            <StatusBar backgroundColor="white" barStyle="dark-content" />
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 24, paddingTop: 50, paddingBottom: 30 }}>
                 <BadgeIcon src={require('../assets/images/icon-signup.png')} />
                 <Text style={styles.title}>Sign Up</Text>

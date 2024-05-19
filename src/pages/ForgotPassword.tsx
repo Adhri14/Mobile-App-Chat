@@ -81,7 +81,7 @@ const ForgotPassword = ({ navigation }: ForgotPasswordScreenTypes) => {
 
     return (
         <View style={styles.page}>
-            <StatusBar backgroundColor="white" />
+            <StatusBar backgroundColor="white" barStyle="dark-content" />
             <Header onPress={() => currentIndex === 0 ? navigation.goBack() : flatListRef.current?.scrollToIndex({ animated: true, index: currentIndex - 1 })} />
             <View style={styles.wrapperIndicator}>
                 {ContainerComponents.map((_: any, index: number) => {
