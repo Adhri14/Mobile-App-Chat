@@ -4,6 +4,7 @@ import { navigationRef } from "./navigationRef";
 import { clearDataStorage, getDataStorage } from "./localStorage";
 // import { store } from "../state/redux";
 
+// export const baseURL = "https://ab6d-114-124-210-197.ngrok-free.app/api/"; // development
 export const baseURL = "https://api-chat-mobile-adhri14s-projects.vercel.app/api/"; // production
 const statusCodeDanger = [401, 500];
 
@@ -73,11 +74,8 @@ export const postAPI = async (endtpoint: string, body: any, paramConfig?: any) =
             message: "Terjadi kesalahan",
             data: result,
         };
-    } catch (error) {
-        const errors = error as Error | AxiosError;
-        if (isAxiosError(errors)) {
-            throw errorResponse(errors?.response?.data, errors?.status!);
-        }
+    } catch (error: any) {
+        throw errorResponse(error?.response?.data, error?.status!);
     }
 };
 
@@ -98,11 +96,8 @@ export const postAPIBasic = async (endtpoint: string, body: any, paramConfig?: a
             message: "Terjadi kesalahan",
             data: result,
         };
-    } catch (error) {
-        const errors = error as Error | AxiosError;
-        if (isAxiosError(errors)) {
-            throw errorResponse(errors?.response?.data, errors?.status!);
-        }
+    } catch (error: any) {
+        throw errorResponse(error?.response?.data, error?.status!);
     }
 };
 
@@ -128,10 +123,7 @@ export const getAPI = async (endtpoint: string, paramConfig?: any) => {
             message: "Terjadi kesalahan",
             data: result,
         };
-    } catch (error) {
-        const errors = error as Error | AxiosError;
-        if (isAxiosError(errors)) {
-            throw errorResponse(errors?.response?.data, errors?.status!);
-        }
+    } catch (error: any) {
+        throw errorResponse(error?.response?.data, error?.status!);
     }
 };

@@ -1,22 +1,58 @@
-import React, { useState } from "react";
-import { ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
 import { colors, fonts } from "../assets/theme";
 import BadgeIcon from "../components/BadgeIcon";
 import Button from "../components/Button";
 import InputText from "../components/InputText";
 import { SignInScreenTypes } from "../router";
+import { singInAPI } from "../api/auth";
+import { clearDataStorage, getDataStorage, setDataStorage } from "../utils/localStorage";
 
 const SignIn = ({ navigation }: SignInScreenTypes) => {
+    const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
     const [form, setForm] = useState({
         email: '',
         password: '',
     });
+
+    useEffect(() => {
+        getDataStorage('token_user').then(res => {
+            if (res) {
+                navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+            } else {
+                setIsLoading(false);
+            }
+        });
+    }, [])
 
     const onHandleChange = (key: string, value: any) => {
         setForm({
             ...form,
             [key]: value,
         });
+    }
+
+    const onSubmit = () => {
+        setIsLoading(true);
+        singInAPI(form).then(res => {
+            console.log(res);
+            setIsLoadingSubmit(false);
+            setDataStorage('token_user', { token: res.data });
+            navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+        }).catch(err => {
+            setIsLoading(false);
+            console.log(err);
+        })
+    }
+
+    if (isLoading || isLoadingSubmit) {
+        return (
+            <View style={styles.loading}>
+                <ActivityIndicator size="large" color={colors.primary} />
+                <Text style={styles.textLoading}>Mohon menunggu</Text>
+            </View>
+        );
     }
 
     return (
@@ -40,7 +76,7 @@ const SignIn = ({ navigation }: SignInScreenTypes) => {
                 />
                 <Text style={styles.forgot} onPress={() => navigation.navigate('ForgotPassword')}>Forgot password?</Text>
                 <View style={{ height: 32 }} />
-                <Button label="Log In" onPress={() => navigation.replace('Home')} />
+                <Button label="Log In" onPress={onSubmit} />
                 <Text style={styles.link}>Don’t have account? <Text onPress={() => navigation.navigate('SignUp')} style={styles.bold}>Sign Up</Text></Text>
             </ScrollView>
         </View>
@@ -50,6 +86,19 @@ const SignIn = ({ navigation }: SignInScreenTypes) => {
 export default SignIn;
 
 const styles = StyleSheet.create({
+    loading: {
+        flex: 1,
+        backgroundColor: 'white',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    textLoading: {
+        fontSize: 20,
+        fontFamily: fonts.medium,
+        color: colors.primaryBold,
+        textAlign: 'center',
+        marginTop: 10
+    },
     page: {
         flex: 1,
         backgroundColor: 'white',

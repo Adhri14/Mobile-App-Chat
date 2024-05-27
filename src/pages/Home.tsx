@@ -9,7 +9,7 @@ const Home = ({ navigation }: HomeScreenTypes) => {
     return (
         <View style={styles.page}>
             <StatusBar backgroundColor="white" barStyle="dark-content" />
-            <Header isBack={false} iconRight />
+            <Header isBack={false} iconRight onPressAvatar={() => navigation.navigate('Setting')} />
             <View style={styles.container}>
                 <FlatList
                     ListHeaderComponent={() => (

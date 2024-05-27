@@ -1,26 +1,56 @@
-import { ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
+import { ActivityIndicator, ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
 import BadgeIcon from "../components/BadgeIcon";
 import { colors, fonts } from "../assets/theme";
 import InputText from "../components/InputText";
 import Checkbox from "../components/Checkbox";
 import Button from "../components/Button";
 import { SignUpScreenTypes } from "../router";
+import { signUpAPI } from "../api/auth";
+import { getDataStorage } from "../utils/localStorage";
 
 const SignUp = ({ navigation }: SignUpScreenTypes) => {
+    const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
     const [form, setForm] = useState({
         fullName: '',
         username: '',
         email: '',
         password: '',
+        deviceToken: '',
         isAgree: false,
     });
+
+    useEffect(() => {
+        getDataStorage('device_token').then(res => {
+            onHandleChange('deviceToken', res.token);
+        });
+    }, []);
 
     const onHandleChange = (key: string, value: any) => {
         setForm({
             ...form,
             [key]: value,
         });
+    }
+
+    const onSubmit = () => {
+        signUpAPI(form).then(res => {
+            console.log(res);
+            setIsLoadingSubmit(false);
+            navigation.replace('VerificationOTP', { email: form.email });
+        }).catch(err => {
+            setIsLoadingSubmit(false);
+            console.log(err);
+        })
+    }
+
+    if (isLoadingSubmit) {
+        return (
+            <View style={styles.loading}>
+                <ActivityIndicator size="large" color={colors.primary} />
+                <Text style={styles.textLoading}>Mohon menunggu</Text>
+            </View>
+        );
     }
 
     return (
@@ -58,7 +88,7 @@ const SignUp = ({ navigation }: SignUpScreenTypes) => {
                     onValueChange={() => onHandleChange('isAgree', !form.isAgree)}
                 />
                 <View style={{ height: 32 }} />
-                <Button label="Create Account" onPress={() => null} />
+                <Button label="Create Account" onPress={onSubmit} />
                 <Text style={styles.link}>Do you have account? <Text onPress={() => navigation.navigate('SignIn')} style={styles.bold}>Sign In</Text></Text>
             </ScrollView>
         </View>
@@ -68,6 +98,19 @@ const SignUp = ({ navigation }: SignUpScreenTypes) => {
 export default SignUp;
 
 const styles = StyleSheet.create({
+    loading: {
+        flex: 1,
+        backgroundColor: 'white',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    textLoading: {
+        fontSize: 20,
+        fontFamily: fonts.medium,
+        color: colors.primaryBold,
+        textAlign: 'center',
+        marginTop: 10
+    },
     page: {
         flex: 1,
         backgroundColor: 'white',
