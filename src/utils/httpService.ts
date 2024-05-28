@@ -5,8 +5,9 @@ import { clearDataStorage, getDataStorage } from "./localStorage";
 // import { store } from "../state/redux";
 
 // export const baseURL = "https://ab6d-114-124-210-197.ngrok-free.app/api/"; // development
+export const appURL = "https://api-chat-mobile-adhri14s-projects.vercel.app";
 export const baseURL = "https://api-chat-mobile-adhri14s-projects.vercel.app/api/"; // production
-const statusCodeDanger = [401, 500];
+const statusCodeDanger = [401];
 
 export const requestHttp = axios.create({
     baseURL,
@@ -36,7 +37,7 @@ export const redirect = async () => {
     await navigationRef?.current?.dispatch(
         CommonActions.reset({
             index: 0,
-            routes: [{ name: "Home", params: { logout: true } }],
+            routes: [{ name: "SignIn" }],
         })
     );
 };
@@ -56,9 +57,9 @@ export const postAPI = async (endtpoint: string, body: any, paramConfig?: any) =
     const auth = await getDataStorage('token_user');
 
     const config = {
-        ...paramConfig,
         headers: {
             Authorization: "Bearer " + auth.token,
+            ...paramConfig,
         },
     };
 
@@ -75,6 +76,9 @@ export const postAPI = async (endtpoint: string, body: any, paramConfig?: any) =
             data: result,
         };
     } catch (error: any) {
+        if (statusCodeDanger.includes(error.response.status)) {
+            redirect();
+        }
         throw errorResponse(error?.response?.data, error?.status!);
     }
 };
@@ -124,6 +128,9 @@ export const getAPI = async (endtpoint: string, paramConfig?: any) => {
             data: result,
         };
     } catch (error: any) {
+        if (statusCodeDanger.includes(error.response.status)) {
+            redirect();
+        }
         throw errorResponse(error?.response?.data, error?.status!);
     }
 };

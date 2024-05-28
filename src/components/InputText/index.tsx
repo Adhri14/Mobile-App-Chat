@@ -9,7 +9,8 @@ interface InputTextType extends TextInputProps {
     inputPassword?: boolean;
 }
 
-const InputText = ({ value, onChangeText, label, inputPassword = false }: InputTextType) => {
+const InputText = (props: InputTextType) => {
+    const { value, onChangeText, label, inputPassword = false } = props;
     const [isActive, setIsActive] = useState(false);
     const textTransform = useRef(new Animated.Value(0)).current;
 
@@ -49,12 +50,13 @@ const InputText = ({ value, onChangeText, label, inputPassword = false }: InputT
             <Animated.Text style={[styles.label, { transform: [{ translateY: textTransform }, { scale: isActive ? .8 : 1 }], backgroundColor: isActive ? colors.gray : 'transparent' }]}>{label}</Animated.Text>
             <TextInput
                 style={styles.input}
-                value={value}
+                // value={value}
                 onFocus={onFocus}
                 onBlur={onBlur}
-                onChangeText={onChangeText}
+                // onChangeText={onChangeText}
                 secureTextEntry={inputPassword}
                 selectionColor={colors.primarySoft}
+                {...props}
             />
         </View >
     );

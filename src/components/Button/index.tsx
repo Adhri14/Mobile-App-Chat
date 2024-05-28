@@ -1,13 +1,16 @@
 import React, { useRef } from "react";
-import { View, Text, StyleSheet, Pressable, Animated } from "react-native";
+import { View, Text, StyleSheet, Pressable, Animated, ViewStyle, PressableProps, StyleProp, ActivityIndicator } from "react-native";
 import { colors, fonts } from "../../assets/theme";
 
-type ButtonTypes = {
+interface ButtonTypes extends PressableProps {
     label: string;
     onPress: () => void;
+    style?: StyleProp<ViewStyle>;
+    isLoading?: boolean;
 }
 
-const Button = ({ label, onPress }: ButtonTypes) => {
+const Button = (props: ButtonTypes) => {
+    const { label, onPress, style, isLoading } = props;
     const scaleButton = useRef(new Animated.Value(1)).current;
 
     const onPressIn = () => {
@@ -28,8 +31,9 @@ const Button = ({ label, onPress }: ButtonTypes) => {
 
     return (
         <Animated.View style={{ transform: [{ scale: scaleButton }] }}>
-            <Pressable style={styles.button} onPress={onPressIn}>
-                <Text style={styles.textButton}>{label}</Text>
+            <Pressable {...props} style={[styles.button, style]} onPress={onPressIn}>
+                {isLoading && <ActivityIndicator color='white' size="small" style={{ marginRight: 10 }} />}
+                <Text style={styles.textButton}>{isLoading ? 'Loading...' : label}</Text>
             </Pressable>
             <View style={styles.blur} />
         </Animated.View>
@@ -44,7 +48,8 @@ const styles = StyleSheet.create({
         borderRadius: 14,
         backgroundColor: colors.primary,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        flexDirection: 'row',
     },
     textButton: {
         fontSize: 16,

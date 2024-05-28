@@ -6,6 +6,7 @@ import InputText from "../components/InputText";
 import Button from "../components/Button";
 import { ForgotPasswordScreenTypes } from "../router";
 import Header from "../components/Header";
+import { forgotPasswordAPI, resendOTPAPI } from "../api/auth";
 
 const { width } = Dimensions.get('window');
 
@@ -26,15 +27,35 @@ const ForgotPassword = ({ navigation }: ForgotPasswordScreenTypes) => {
         });
     }
 
+    const resendOTP = () => {
+        resendOTPAPI({ email: form.email }).then(res => {
+            console.log(res);
+            onHandleChange('otp', '');
+        }).catch(err => {
+            console.log(err);
+        })
+    }
+
     const onSubmit = () => {
         if (currentIndex === 0) {
-            flatListRef.current?.scrollToIndex({ animated: true, index: 1 });
+            resendOTPAPI({ email: form.email }).then(res => {
+                console.log(res);
+                flatListRef.current?.scrollToIndex({ animated: true, index: 1 });
+            }).catch(err => {
+                console.log(err);
+            })
         }
         if (currentIndex === 1) {
+            onHandleChange('otp', '');
             flatListRef.current?.scrollToEnd({ animated: true });
-            return;
         }
         if (currentIndex === 2) {
+            forgotPasswordAPI(form).then(res => {
+                console.log(res.data);
+                navigation.replace('SignIn');
+            }).catch(err => {
+                console.log(err);
+            })
         }
     }
 
@@ -60,7 +81,7 @@ const ForgotPassword = ({ navigation }: ForgotPasswordScreenTypes) => {
                     <View style={{ height: 30 }} />
                     <InputText value={form.otp} onChangeText={(value: string) => onHandleChange('otp', value)} label="Enter OTP" />
                     <Button label="Continue" onPress={() => flatListRef.current?.scrollToIndex({ animated: true, index: 2 })} />
-                    <Text style={styles.link}>Didn't get OTP? <Text onPress={onSubmit} style={styles.bold}>Resend OTP</Text></Text>
+                    <Text style={styles.link}>Didn't get OTP? <Text onPress={resendOTP} style={styles.bold}>Resend OTP</Text></Text>
                 </View>
             )
         },
@@ -71,8 +92,8 @@ const ForgotPassword = ({ navigation }: ForgotPasswordScreenTypes) => {
                     <BadgeIcon src={require('../assets/images/icon-password.png')} />
                     <Text style={styles.title}>Reset Password</Text>
                     <View style={{ height: 30 }} />
-                    <InputText value={form.password} onChangeText={(value: string) => onHandleChange('password', value)} label="New Password" />
-                    <InputText value={form.confirmPassword} onChangeText={(value: string) => onHandleChange('confirmPassword', value)} label="Confirm Password" />
+                    <InputText value={form.password} inputPassword onChangeText={(value: string) => onHandleChange('password', value)} label="New Password" />
+                    <InputText value={form.confirmPassword} inputPassword onChangeText={(value: string) => onHandleChange('confirmPassword', value)} label="Confirm Password" />
                     <Button label="Continue" onPress={onSubmit} />
                 </View>
             )

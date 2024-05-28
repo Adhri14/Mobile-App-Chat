@@ -15,3 +15,7 @@ export const verficationAPI = (data: any) => {
 export const resendOTPAPI = (data: any) => {
     return postAPIBasic('auth/send-otp', data);
 }
+
+export const forgotPasswordAPI = (data: any) => {
+    return postAPIBasic('auth/forgot-password', data);
+}
