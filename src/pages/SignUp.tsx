@@ -80,7 +80,6 @@ const SignUp = ({ navigation }: SignUpScreenTypes) => {
                     label="Password"
                     value={form.password}
                     onChangeText={(value: string) => onHandleChange('password', value)}
-                    keyboardType="number-pad"
                     inputPassword
                 />
                 <Checkbox

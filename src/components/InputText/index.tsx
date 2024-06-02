@@ -7,17 +7,24 @@ interface InputTextType extends TextInputProps {
     value: any;
     onChangeText: (text: string) => void;
     inputPassword?: boolean;
+    textArea?: boolean;
 }
 
 const InputText = (props: InputTextType) => {
-    const { value, onChangeText, label, inputPassword = false } = props;
+    const { value, onChangeText, label, inputPassword = false, textArea = false } = props;
     const [isActive, setIsActive] = useState(false);
     const textTransform = useRef(new Animated.Value(0)).current;
+    const scaleText = useRef(new Animated.Value(1)).current;
 
     useEffect(() => {
         if (value) {
             Animated.timing(textTransform, {
-                toValue: -30,
+                toValue: -28,
+                duration: 200,
+                useNativeDriver: true,
+            }).start();
+            Animated.timing(scaleText, {
+                toValue: 0.8,
                 duration: 200,
                 useNativeDriver: true,
             }).start();
@@ -27,7 +34,12 @@ const InputText = (props: InputTextType) => {
 
     const onFocus = () => {
         Animated.timing(textTransform, {
-            toValue: -30,
+            toValue: -28,
+            duration: 200,
+            useNativeDriver: true,
+        }).start();
+        Animated.timing(scaleText, {
+            toValue: 0.8,
             duration: 200,
             useNativeDriver: true,
         }).start();
@@ -41,14 +53,28 @@ const InputText = (props: InputTextType) => {
                 duration: 200,
                 useNativeDriver: true,
             }).start();
+            Animated.timing(scaleText, {
+                toValue: 1,
+                duration: 200,
+                useNativeDriver: true,
+            }).start();
             setIsActive(false);
         }
     }
 
     return (
-        <View style={styles.container}>
-            <Animated.Text style={[styles.label, { transform: [{ translateY: textTransform }, { scale: isActive ? .8 : 1 }], backgroundColor: isActive ? colors.gray : 'transparent' }]}>{label}</Animated.Text>
-            <TextInput
+        <View style={[styles.container, { height: textArea ? 100 : 60 }]}>
+            <Animated.Text style={[styles.label, { transform: [{ translateY: textTransform }, { scale: scaleText }], backgroundColor: isActive ? colors.gray : 'transparent', paddingHorizontal: 10 }]}>{label}</Animated.Text>
+            {textArea ? (
+                <TextInput
+                    style={[styles.input, { verticalAlign: 'top' }]}
+                    onFocus={onFocus}
+                    onBlur={onBlur}
+                    selectionColor={colors.primarySoft}
+                    multiline
+                    {...props}
+                />
+            ) : <TextInput
                 style={styles.input}
                 // value={value}
                 onFocus={onFocus}
@@ -57,7 +83,7 @@ const InputText = (props: InputTextType) => {
                 secureTextEntry={inputPassword}
                 selectionColor={colors.primarySoft}
                 {...props}
-            />
+            />}
         </View >
     );
 }
@@ -67,7 +93,6 @@ export default InputText;
 const styles = StyleSheet.create({
     container: {
         backgroundColor: colors.gray,
-        height: 60,
         borderRadius: 14,
         paddingHorizontal: 20,
         position: 'relative',
@@ -86,5 +111,5 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontFamily: fonts.normal,
         color: colors.dark2
-    }
+    },
 });

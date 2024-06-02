@@ -1,15 +1,49 @@
 import { FlatList, StatusBar, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import SearchInput from "../components/SearchInput";
 import ListMessage from "../components/ListMessage";
 import { HomeScreenTypes } from "../router";
+import { getProfile } from "../api/user";
+import { ProfileStateType } from "./Profile";
+import { imageURL } from "../utils/httpService";
+import { useIsFocused } from "@react-navigation/native";
+import { getListChatsAPI } from "../api/chat";
+import ListEmpty from "../components/ListEmpty";
 
 const Home = ({ navigation }: HomeScreenTypes) => {
+    const isFocused = useIsFocused();
+    const [profile, setProfile] = useState<ProfileStateType>();
+    const [offset, setOffset] = useState(0);
+    const [chats, setChats] = useState<any[]>([]);
+
+    useEffect(() => {
+        if (isFocused) {
+            getProfileAPI();
+            getListChat();
+        }
+    }, [isFocused]);
+
+    const getProfileAPI = () => {
+        getProfile().then(res => {
+            setProfile(res.data);
+        }).catch(err => {
+            console.log(err);
+        });
+    }
+
+    const getListChat = () => {
+        getListChatsAPI().then(res => {
+            setChats(res.data);
+        }).catch(err => {
+            console.log(err);
+        });
+    }
+
     return (
         <View style={styles.page}>
             <StatusBar backgroundColor="white" barStyle="dark-content" />
-            <Header isBack={false} iconRight onPressAvatar={() => navigation.navigate('Profile')} />
+            <Header isBack={false} iconRight onPressNewChat={() => navigation.navigate('ListUsers')} onPressAvatar={() => navigation.navigate('Profile', { logout: true })} avatar={profile?.image === null ? undefined : { uri: `${imageURL}/${profile?.image}` }} />
             <View style={styles.container}>
                 <FlatList
                     ListHeaderComponent={() => (
@@ -17,7 +51,7 @@ const Home = ({ navigation }: HomeScreenTypes) => {
                             <SearchInput />
                         </View>
                     )}
-                    data={[1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 12, 123, 123123, 12312, 213]}
+                    data={chats}
                     renderItem={({ }) => (
                         <ListMessage
                             name="Adhri"
@@ -27,6 +61,7 @@ const Home = ({ navigation }: HomeScreenTypes) => {
                             onPress={() => navigation.navigate('ChatRoom')}
                         />
                     )}
+                    ListEmptyComponent={() => <ListEmpty message="Belum ada pesan masuk" />}
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={{ paddingBottom: 10 }}
                 />

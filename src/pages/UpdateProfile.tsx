@@ -5,7 +5,7 @@ import { UpdateProfileScreenTypes } from "../router";
 import { getProfile, updateProfile } from "../api/user";
 import Header from "../components/Header";
 import { colors, fonts } from "../assets/theme";
-import { appURL } from "../utils/httpService";
+import { imageURL as imageHTTP } from "../utils/httpService";
 import InputText from "../components/InputText";
 import Button from "../components/Button";
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet"
@@ -71,7 +71,7 @@ const UpdateProfile = (props: UpdateProfileScreenTypes) => {
 
     const onOpenCamera = async () => {
         try {
-            const result: any = await launchCamera({ quality: 0.4, maxWidth: 128, maxHeight: 128, mediaType: 'photo' });
+            const result: any = await launchCamera({ quality: 1, maxWidth: 512, maxHeight: 512, mediaType: 'photo' });
             if (Number(result.assets?.length) > 0) {
                 setIsUpload(true);
                 setImageURL(String(result?.assets[0]?.uri));
@@ -90,7 +90,7 @@ const UpdateProfile = (props: UpdateProfileScreenTypes) => {
 
     const onOpenGallery = async () => {
         try {
-            const result: any = await launchImageLibrary({ quality: 0.4, maxWidth: 128, maxHeight: 128, mediaType: 'photo' });
+            const result: any = await launchImageLibrary({ quality: 1, maxWidth: 512, maxHeight: 512, mediaType: 'photo' });
             if (Number(result.assets?.length) > 0) {
                 setIsUpload(true);
                 setImageURL(String(result?.assets[0]?.uri));
@@ -138,11 +138,11 @@ const UpdateProfile = (props: UpdateProfileScreenTypes) => {
                     <View style={styles.container}>
                         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                             <TouchableOpacity style={styles.wrapperAvatar} onPress={presentModal}>
-                                <Image style={styles.avatar} source={{ uri: profile.image && !isUpload ? `${appURL}/uploads/${profile.image}` : profile.image && isUpload ? imageURL : 'https://i.pravatar.cc/300' }} />
+                                <Image style={styles.avatar} source={{ uri: profile.image !== null && !isUpload ? `${imageHTTP}/${profile.image}` : profile.image && isUpload ? imageURL : 'https://i.pravatar.cc/300' }} />
                             </TouchableOpacity>
                             <InputText value={profile.fullName} onChangeText={(value: string) => onHandleChange('fullName', value)} label="Full Name" />
                             <InputText value={profile.username} onChangeText={(value: string) => onHandleChange('username', value)} label="Username" />
-                            <InputText value={profile.email} editable={false} onChangeText={(value: string) => onHandleChange('email', value)} label="Full Name" />
+                            <InputText value={profile.bio} textArea onChangeText={(value: string) => onHandleChange('bio', value)} label="Bio" />
                             <View style={{ flex: 1 }} />
                             <Button label="Save Profile" onPress={onSubmit} isLoading={isLoading} disabled={isLoading} />
                         </ScrollView>

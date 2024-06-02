@@ -54,7 +54,7 @@ const VerificationOTP = ({ navigation, route }: VerificationOTPScreenTypes) => {
                 <BadgeIcon src={require('../assets/images/icon-email.png')} />
                 <Text style={styles.title}>Enter OTP</Text>
                 <View style={{ height: 30 }} />
-                <InputText value={form.otp} onChangeText={(value: string) => onHandleChange('otp', value)} label="Enter OTP" />
+                <InputText value={form.otp} onChangeText={(value: string) => onHandleChange('otp', value)} label="Enter OTP" keyboardType="number-pad" />
                 <Button label="Continue" onPress={onSubmit} />
                 <Text style={styles.link}>Didn't get OTP? <Text onPress={resendOTP} style={styles.bold}>Resend OTP</Text></Text>
             </View>

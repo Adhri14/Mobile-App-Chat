@@ -13,10 +13,12 @@ type HeadStatisticProfileType = {
     fullname: string;
     bio?: string;
     onNavigate?: () => void;
+    logout?: boolean;
+    isFollowing?: boolean;
 }
 
 const HeadStatisticProfile = (props: HeadStatisticProfileType) => {
-    const { image, totalPosting, totalFollowers, totalFollowing, fullname, bio, onNavigate } = props;
+    const { image, totalPosting, totalFollowers, totalFollowing, fullname, bio, onNavigate, logout = false, isFollowing = false } = props;
     return (
         <View style={styles.container}>
             <View style={styles.wrapperHeader}>
@@ -30,9 +32,9 @@ const HeadStatisticProfile = (props: HeadStatisticProfileType) => {
                 </View>
             </View>
             <Text style={styles.name}>{fullname}</Text>
-            <Text style={styles.bio}>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eos non impedit excepturi, quisquam iste reiciendis beatae blanditiis dicta.</Text>
-            <TouchableOpacity style={styles.btn} onPress={onNavigate}>
-                <Text style={styles.textBtn}>Edit profil</Text>
+            <Text style={styles.bio}>{bio}</Text>
+            <TouchableOpacity style={[styles.btn, { backgroundColor: logout || isFollowing ? colors.gray : colors.primary }]} onPress={onNavigate}>
+                <Text style={[styles.textBtn, { color: logout || isFollowing ? colors.black : 'white' }]}>{logout ? 'Edit profil' : isFollowing ? 'Berhenti mengikuti' : 'Ikuti'}</Text>
             </TouchableOpacity>
         </View>
     );
@@ -71,9 +73,10 @@ const styles = StyleSheet.create({
         marginLeft: 20
     },
     name: {
-        fontSize: 12,
+        fontSize: 16,
         fontFamily: fonts.bold,
-        color: colors.primary
+        color: colors.primary,
+        marginBottom: 5
     },
     bio: {
         fontSize: 12,
@@ -86,7 +89,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 8,
-        backgroundColor: colors.gray,
         marginTop: 10
     },
     textBtn: {

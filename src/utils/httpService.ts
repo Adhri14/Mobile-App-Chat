@@ -4,9 +4,10 @@ import { navigationRef } from "./navigationRef";
 import { clearDataStorage, getDataStorage } from "./localStorage";
 // import { store } from "../state/redux";
 
-// export const baseURL = "https://ab6d-114-124-210-197.ngrok-free.app/api/"; // development
-export const appURL = "https://api-chat-mobile-adhri14s-projects.vercel.app";
-export const baseURL = "https://api-chat-mobile-adhri14s-projects.vercel.app/api/"; // production
+export const baseURL = "https://8a0c-182-0-102-253.ngrok-free.app/api/"; // development
+export const imageURL = "https://8a0c-182-0-102-253.ngrok-free.app/uploads";
+// export const imageURL = "https://api-chat-mobile-adhri14s-projects.vercel.app/public/uploads";
+// export const baseURL = "https://api-chat-mobile-adhri14s-projects.vercel.app/api/"; // production
 const statusCodeDanger = [401];
 
 export const requestHttp = axios.create({

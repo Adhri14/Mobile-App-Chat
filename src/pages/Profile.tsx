@@ -5,15 +5,15 @@ import { ProfileScreenTypes } from "../router";
 import { colors, fonts } from "../assets/theme";
 import Button from "../components/Button";
 import { clearDataStorage } from "../utils/localStorage";
-import { getProfile } from "../api/user";
-import { appURL } from "../utils/httpService";
+import { followUserAPI, getProfile, getProfileById } from "../api/user";
+import { imageURL } from "../utils/httpService";
 import HeadStatisticProfile from "../components/HeadStatisticProfile";
 import { useIsFocused } from "@react-navigation/native";
 
 export type ProfileStateType = {
     fullName: string;
     username: string;
-    id: string;
+    _id: string;
     email: string;
     image: any;
     bio: string;
@@ -21,48 +21,90 @@ export type ProfileStateType = {
     following?: string[];
 }
 
-const Profile = ({ navigation }: ProfileScreenTypes) => {
+const Profile = ({ navigation, route }: ProfileScreenTypes) => {
+    const { logout = false, userId = '' }: any = route.params;
     const isFocused = useIsFocused();
     const [profile, setProfile] = useState<ProfileStateType>({
         fullName: '',
         username: '',
-        id: '',
+        _id: '',
         email: '',
         bio: '',
         image: null,
         followers: [],
         following: []
     });
+    const [userLogin, setUserLogin] = useState('');
 
     useEffect(() => {
+        console.log('user : ', userId);
         if (isFocused) {
-            getProfile().then(res => {
-                console.log(res.data);
-                setProfile(res.data);
-            }).catch(err => {
-                console.log(err);
-            });
+            if (userId !== '') {
+                getDataUser();
+            } else {
+                getProfile().then(res => {
+                    setProfile(res.data);
+                }).catch(err => {
+                    console.log(err);
+                });
+            }
         }
-    }, [isFocused]);
+    }, [isFocused, userId]);
+
+    const getDataUser = () => {
+        getProfileById(userId).then(res => {
+            setProfile(res.data);
+        }).catch(err => {
+            console.log(err);
+        });
+        getProfile().then(res => {
+            setUserLogin(res.data._id);
+        }).catch(err => {
+            console.log(err);
+        });
+    }
 
     const onSignOut = () => {
         clearDataStorage(['token_user']);
         navigation.reset({ index: 0, routes: [{ name: 'SignIn' }] });
     }
 
+    const onAction = () => {
+        if (userId !== '') {
+            onFollowing();
+        } else {
+            navigation.navigate('UpdateProfile');
+        }
+    }
+
+    const onFollowing = () => {
+        console.log('follow');
+        console.log('user view : ', userId);
+        console.log('user login : ', userLogin);
+        followUserAPI(userId).then((res) => {
+            console.log(res);
+            getDataUser();
+        }).catch(err => {
+            console.log(err);
+        });
+    }
+
     return (
         <View style={styles.page}>
-            <Header isBack titleHeader={profile.username || 'Akun'} color={colors.black} fontSizeTitle={16} onPress={() => navigation.goBack()} />
+            <Header isBack titleHeader={profile?.username || 'Akun'} color={colors.black} fontSizeTitle={16} onPress={() => navigation.goBack()} />
             <View style={styles.container}>
                 <HeadStatisticProfile
-                    image={{ uri: profile.image ? `${appURL}/uploads/${profile.image}` : 'https://i.pravatar.cc/300' }}
+                    image={{ uri: profile?.image !== null ? `${imageURL}/${profile?.image}` : 'https://i.pravatar.cc/300' }}
                     totalPosting={34}
-                    totalFollowers={Number(profile.followers?.length) || 0}
-                    totalFollowing={Number(profile.following?.length) || 0}
-                    fullname={profile.fullName}
-                    onNavigate={() => navigation.navigate('UpdateProfile')}
+                    totalFollowers={Number(profile?.followers?.length) || 0}
+                    totalFollowing={Number(profile?.following?.length) || 0}
+                    fullname={profile?.fullName}
+                    onNavigate={onAction}
+                    bio={profile?.bio}
+                    logout={logout}
+                    isFollowing={Boolean(profile?.followers?.find(item => item === userLogin))}
                 />
-                <Button style={[{ backgroundColor: 'red' }]} label="Keluar" onPress={onSignOut} />
+                {Boolean(logout) && <Button style={[{ backgroundColor: 'red' }]} label="Keluar" onPress={onSignOut} />}
             </View>
         </View>
     );

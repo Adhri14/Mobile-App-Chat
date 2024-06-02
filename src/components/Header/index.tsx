@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, Pressable } from "react-native";
+import { View, Text, StyleSheet, Image, Pressable, ImageURISource } from "react-native";
 import { colors, fonts } from "../../assets/theme";
 
 type HeaderTypes = {
@@ -11,10 +11,11 @@ type HeaderTypes = {
     fontSizeTitle?: number;
     color?: string;
     titleHeader?: string;
+    avatar?: ImageURISource;
 }
 
 const Header = (props: HeaderTypes) => {
-    const { onPress, isBack = true, iconRight, onPressAvatar, onPressNewChat, fontSizeTitle = 24, color = colors.primary, titleHeader } = props;
+    const { onPress, isBack = true, iconRight, onPressAvatar, onPressNewChat, fontSizeTitle = 24, color = colors.primary, titleHeader, avatar = { uri: 'https://i.pravatar.cc/300' } } = props;
     return (
         <View style={styles.container}>
             <View style={styles.buttonLeft}>
@@ -31,7 +32,7 @@ const Header = (props: HeaderTypes) => {
                         <Image source={require('../../assets/images/icon-add-chat.png')} style={styles.addChat} />
                     </Pressable>
                     <Pressable style={styles.icon} onPress={onPressAvatar}>
-                        <Image source={{ uri: 'https://i.pravatar.cc/300' }} style={styles.avatar} />
+                        <Image source={avatar} style={styles.avatar} />
                     </Pressable>
                 </View>
             )}
