@@ -4,7 +4,7 @@ import { colors, fonts } from "../../assets/theme";
 
 type InputChatTypes = {
     value?: string | number | any;
-    onChangeText?: (value?: string) => void;
+    onChangeText?: (value: string) => void;
     onSend?: () => void;
 }
 

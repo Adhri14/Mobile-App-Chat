@@ -7,8 +7,10 @@ import InputText from "../components/InputText";
 import { SignInScreenTypes } from "../router";
 import { singInAPI } from "../api/auth";
 import { clearDataStorage, getDataStorage, setDataStorage } from "../utils/localStorage";
+import useToast from "../hooks/useToast";
 
 const SignIn = ({ navigation }: SignInScreenTypes) => {
+    const { setToast } = useToast();
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
     const [form, setForm] = useState({
@@ -35,6 +37,7 @@ const SignIn = ({ navigation }: SignInScreenTypes) => {
 
     const onSubmit = () => {
         setIsLoading(true);
+        setIsLoadingSubmit(true);
         singInAPI(form).then(res => {
             console.log(res);
             setIsLoadingSubmit(false);
@@ -42,8 +45,15 @@ const SignIn = ({ navigation }: SignInScreenTypes) => {
             navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
         }).catch(err => {
             setIsLoading(false);
+            setIsLoadingSubmit(false);
             console.log(err);
-        })
+            setToast({
+                isShow: true,
+                isError: true,
+                title: 'Error',
+                message: err.data.message,
+            });
+        });
     }
 
     if (isLoading || isLoadingSubmit) {
@@ -63,7 +73,7 @@ const SignIn = ({ navigation }: SignInScreenTypes) => {
                 <Text style={styles.title}>Sign In</Text>
                 <Text style={styles.subtitle}>Selamat datang di <Text style={{ color: colors.primary, fontWeight: '600' }}>Aplikasi Econify</Text>. Silahkan login terlebih dahulu untuk menikmati <Text style={{ color: colors.primary, fontWeight: '600' }}>Aplikasi Econify</Text>.</Text>
                 <InputText
-                    label="Email"
+                    label="Email or Username"
                     value={form.email}
                     onChangeText={(value: string) => onHandleChange('email', value)}
                     keyboardType="email-address"

@@ -6,6 +6,7 @@ import { navigationRef } from "./src/utils/navigationRef.ts";
 import messaging from "@react-native-firebase/messaging";
 import pushNotification from "./src/utils/pushNotification.ts";
 import { setDataStorage } from "./src/utils/localStorage.ts";
+import FlashMessage from "react-native-flash-message";
 
 const App = () => {
     useEffect(() => {
@@ -82,6 +83,7 @@ const App = () => {
     return (
         <NavigationContainer ref={navigationRef} onReady={() => Platform.OS === 'android' && NativeModules.SplashScreenModule?.hide()}>
             <Router />
+            <FlashMessage position="top" />
         </NavigationContainer>
     );
 }

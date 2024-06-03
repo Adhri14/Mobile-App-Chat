@@ -12,6 +12,7 @@ const colors = {
     dark: '#7C8BA0',
     dark2: '#61677D',
     black: '#4C4C4C',
+    danger: '#EE2737',
 };
 
 export {

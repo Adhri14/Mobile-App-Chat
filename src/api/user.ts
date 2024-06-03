@@ -12,8 +12,8 @@ export const updateProfile = (data: any) => {
     return postAPI('user/update-profile', data, { 'Content-Type': 'multipart/form-data' });
 }
 
-export const getUsersAPI = () => {
-    return getAPI('user/list');
+export const getUsersAPI = (params?: any) => {
+    return getAPI(`user/list?search=${params?.search || ''}&offset=${params?.offset || 0}&limit=${params?.limit || 10}`);
 }
 
 export const followUserAPI = (id: string) => {

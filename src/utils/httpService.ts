@@ -4,8 +4,8 @@ import { navigationRef } from "./navigationRef";
 import { clearDataStorage, getDataStorage } from "./localStorage";
 // import { store } from "../state/redux";
 
-export const baseURL = "https://8a0c-182-0-102-253.ngrok-free.app/api/"; // development
-export const imageURL = "https://8a0c-182-0-102-253.ngrok-free.app/uploads";
+export const baseURL = "http://www.apimobilechat.appsku.cloud/api/"; // development
+export const imageURL = "http://www.apimobilechat.appsku.cloud/uploads";
 // export const imageURL = "https://api-chat-mobile-adhri14s-projects.vercel.app/public/uploads";
 // export const baseURL = "https://api-chat-mobile-adhri14s-projects.vercel.app/api/"; // production
 const statusCodeDanger = [401];
@@ -108,6 +108,8 @@ export const postAPIBasic = async (endtpoint: string, body: any, paramConfig?: a
 
 export const getAPI = async (endtpoint: string, paramConfig?: any) => {
     const auth = await getDataStorage('token_user');
+
+    console.log(auth);
 
     const config = {
         ...paramConfig,

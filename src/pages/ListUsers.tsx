@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, FlatList, StatusBar } from "react-native";
+import { View, Text, StyleSheet, FlatList, StatusBar, TextInput } from "react-native";
 import Header from "../components/Header";
 import SearchInput from "../components/SearchInput";
 import ListMessage from "../components/ListMessage";
@@ -12,6 +12,7 @@ import { imageURL } from "../utils/httpService";
 const ListUsers = ({ navigation }: ListUsersScreenTypes) => {
     const [users, setUsers] = useState<ProfileStateType[]>([]);
     const [refreshing, setRefreshing] = useState(false);
+    const [search, setSearch] = useState('');
 
     useEffect(() => {
         getUsers();
@@ -21,16 +22,40 @@ const ListUsers = ({ navigation }: ListUsersScreenTypes) => {
         if (refreshing) {
             getUsers();
         }
-    }, [refreshing])
+    }, [refreshing]);
+
+    useEffect(() => {
+        let timeout: any;
+        if (search !== '') {
+            timeout = setTimeout(getUsers, 500);
+        } else {
+            getUsers();
+        }
+
+        return () => {
+            clearTimeout(timeout);
+        }
+    }, [search]);
 
     const getUsers = () => {
-        getUsersAPI().then(res => {
+        getUsersAPI({ search }).then(res => {
+            console.log(`${search} : `, res.data);
             setRefreshing(false);
-            setUsers(res.data);
+            const newArray: ProfileStateType[] = [];
+            if (Array.isArray(res.data)) {
+                res.data.map((item: ProfileStateType) => {
+                    newArray.push(item);
+                });
+            }
+            setUsers(newArray);
         }).catch(err => {
             setRefreshing(false);
             console.log(err);
         })
+    }
+
+    const onRefresh = () => {
+        setRefreshing(true);
     }
 
     return (
@@ -40,10 +65,10 @@ const ListUsers = ({ navigation }: ListUsersScreenTypes) => {
             <View style={styles.container}>
                 <FlatList
                     refreshing={refreshing}
-                    onRefresh={() => setRefreshing(true)}
-                    ListHeaderComponent={() => (
+                    onRefresh={onRefresh}
+                    ListHeaderComponent={(
                         <View style={{ marginBottom: 20 }}>
-                            <SearchInput />
+                            <SearchInput value={search} onChangeText={(text: string) => setSearch(text)} />
                         </View>
                     )}
                     data={users}

@@ -16,6 +16,7 @@ const Home = ({ navigation }: HomeScreenTypes) => {
     const [profile, setProfile] = useState<ProfileStateType>();
     const [offset, setOffset] = useState(0);
     const [chats, setChats] = useState<any[]>([]);
+    const [search, setSearch] = useState('');
 
     useEffect(() => {
         if (isFocused) {
@@ -48,7 +49,7 @@ const Home = ({ navigation }: HomeScreenTypes) => {
                 <FlatList
                     ListHeaderComponent={() => (
                         <View style={{ marginBottom: 20 }}>
-                            <SearchInput />
+                            <SearchInput value={search} onChangeText={(text: string) => setSearch(text)} />
                         </View>
                     )}
                     data={chats}

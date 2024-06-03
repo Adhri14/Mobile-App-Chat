@@ -103,6 +103,7 @@ const Profile = ({ navigation, route }: ProfileScreenTypes) => {
                     bio={profile?.bio}
                     logout={logout}
                     isFollowing={Boolean(profile?.followers?.find(item => item === userLogin))}
+                    onMessage={() => navigation.navigate('ChatRoom')}
                 />
                 {Boolean(logout) && <Button style={[{ backgroundColor: 'red' }]} label="Keluar" onPress={onSignOut} />}
             </View>
