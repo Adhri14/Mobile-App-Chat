@@ -1,5 +1,5 @@
-import React from "react";
-import { View, TouchableOpacity, TextInput, Image, StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, TouchableOpacity, TextInput, Image, StyleSheet, Keyboard, Platform } from "react-native";
 import { colors, fonts } from "../../assets/theme";
 
 type InputChatTypes = {
@@ -10,8 +10,23 @@ type InputChatTypes = {
 
 const InputChat = (props: InputChatTypes) => {
     const { value, onChangeText, onSend } = props;
+    const [showTabbar, setShowTabbar] = useState(true);
+
+    useEffect(() => {
+        const subscribeShow = Keyboard.addListener('keyboardDidShow', (event) => {
+            setShowTabbar(false);
+        });
+        const subscribeHide = Keyboard.addListener('keyboardDidHide', (event) => {
+            setShowTabbar(true);
+        });
+        return () => {
+            subscribeShow.remove();
+            subscribeHide.remove();
+        }
+    }, [showTabbar]);
+
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { marginBottom: Platform.OS === 'ios' && !showTabbar ? 70 : Platform.OS === 'android' ? 20 : 0 }]}>
             <TextInput multiline value={value} onChangeText={onChangeText} placeholder="Type your message" style={styles.input} placeholderTextColor={colors.black} />
             <TouchableOpacity style={styles.button} onPress={onSend}>
                 <Image source={require('../../assets/images/icon-send.png')} style={styles.image} />
@@ -28,7 +43,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'flex-end',
         paddingHorizontal: 24,
-        paddingVertical: 10
     },
     button: {
         width: 45,
@@ -53,6 +67,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         fontSize: 14,
         fontFamily: fonts.normal,
-        maxHeight: 80
+        minHeight: 45,
+        maxHeight: 80,
     }
 });

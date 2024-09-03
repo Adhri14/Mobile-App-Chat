@@ -20,7 +20,8 @@ const SignIn = ({ navigation }: SignInScreenTypes) => {
 
     useEffect(() => {
         getDataStorage('token_user').then(res => {
-            if (res) {
+            console.log('dasa : ', res);
+            if (res !== null) {
                 navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
             } else {
                 setIsLoading(false);
@@ -77,6 +78,8 @@ const SignIn = ({ navigation }: SignInScreenTypes) => {
                     value={form.email}
                     onChangeText={(value: string) => onHandleChange('email', value)}
                     keyboardType="email-address"
+                    autoCapitalize="none"
+                    autoCorrect={false}
                 />
                 <InputText
                     label="Password"

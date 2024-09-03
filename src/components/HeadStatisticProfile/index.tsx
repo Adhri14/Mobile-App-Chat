@@ -35,7 +35,7 @@ const HeadStatisticProfile = (props: HeadStatisticProfileType) => {
             </View>
             <Text style={styles.name}>{fullname}</Text>
             {/* <Text style={styles.bio}>{bio}</Text> */}
-            <HighlightText text={bio} />
+            <HighlightText text={bio} isBio />
             <View style={styles.rowButton}>
                 {!logout && isFollowing && (
                     <TouchableOpacity style={[styles.btn, { backgroundColor: colors.primary, width: '50%', marginRight: 10 }]} onPress={onMessage}>

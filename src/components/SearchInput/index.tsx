@@ -1,14 +1,14 @@
 import React, { memo } from "react";
-import { View, StyleSheet, TextInput, Image, TextInputProps } from "react-native";
+import { View, StyleSheet, TextInput, Image, TextInputProps, TextInputAndroidProps, TextInputIOSProps } from "react-native";
 import { colors, fonts } from "../../assets/theme";
 
-interface SearchInputType extends TextInputProps { }
+interface SearchInputType extends TextInputProps, TextInputAndroidProps, TextInputIOSProps { }
 
-const SearchInput = (props: SearchInputType) => {
+const SearchInput: React.FC<SearchInputType> = ({ ...props }) => {
     return (
         <View style={styles.container}>
             <Image source={require('../../assets/images/icon-search.png')} style={styles.icon} />
-            <TextInput placeholder="Search" style={styles.input} placeholderTextColor={colors.dark} selectionColor={colors.primarySoft} {...props} />
+            <TextInput {...props} placeholder="Search" style={styles.input} placeholderTextColor={colors.dark} selectionColor={colors.primarySoft} />
         </View>
     );
 }

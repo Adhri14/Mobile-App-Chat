@@ -1,9 +1,10 @@
 import React, { useCallback } from "react";
-import { View, Text, StyleSheet, TextStyle, Linking, Alert } from "react-native";
+import { View, Text, StyleSheet, TextStyle, Linking, Alert, Pressable } from "react-native";
 import { colors, fonts } from "../../assets/theme";
 
 type HighlightTextType = {
     text?: string;
+    isBio?: boolean;
 }
 
 type Parts = {
@@ -13,12 +14,12 @@ type Parts = {
 
 const HighlightText = (props: HighlightTextType) => {
     const regex = /https?:\/\/[^\s]+/g; // Regex untuk URL
-    const { text } = props;
+    const { text }: any = props;
     const splitTextByRegex = (text: string, regex: any) => {
         const newParts: Parts[] = [];
         let lastIndex = 0;
 
-        text.replace(regex, (match: string, index?: number) => {
+        text.replace(regex, (match?: string, index?: number) => {
             if (Number(index) > lastIndex) {
                 newParts.push({ text: text.slice(lastIndex, Number(index)), isMatch: false });
             }
@@ -36,19 +37,28 @@ const HighlightText = (props: HighlightTextType) => {
     const parts = splitTextByRegex(text!, regex);
 
     const onOpenURL = useCallback(async (url: string) => {
+        console.log('cek url : ', url);
         const supported = await Linking.canOpenURL(url);
+        console.log('cek url : ', supported);
         if (supported) {
+            await Linking.openURL(url);
+        } else {
             await Linking.openURL(url);
         }
     }, []);
 
     return (
-        <Text style={[styles.bio]}>
+        <Text style={[styles.bio, { paddingRight: props.isBio ? 30 : 0 }]}>
             {parts.map((part, index) => (
-                <Text
+                part.isMatch ? <Text
                     key={index}
-                    style={part.isMatch ? styles.highlightStyle : null}
-                    onPress={() => part.isMatch ? onOpenURL(part.text) : null}
+                    style={styles.highlightStyle}
+                    onPress={() => onOpenURL(part.text)}
+                >
+                    {part.text}
+                </Text> : <Text
+                    key={index}
+                    style={{ color: colors.black }}
                 >
                     {part.text}
                 </Text>
@@ -62,7 +72,6 @@ export default HighlightText;
 const styles = StyleSheet.create({
     bio: {
         fontSize: 12,
-        paddingRight: 30,
         fontFamily: fonts.normal,
         color: colors.black,
     },

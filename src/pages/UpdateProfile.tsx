@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Alert, Image, PermissionsAndroid, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Image, PermissionsAndroid, Platform, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ProfileStateType } from "./Profile";
 import { UpdateProfileScreenTypes } from "../router";
 import { getProfile, updateProfile } from "../api/user";
@@ -11,16 +11,18 @@ import Button from "../components/Button";
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet"
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
+import useToast from "../hooks/useToast";
 
 const UpdateProfile = (props: UpdateProfileScreenTypes) => {
     const { navigation } = props;
+    const { setToast } = useToast();
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const snapPoints = useMemo(() => [0.01, '25%'], []);
 
     const [profile, setProfile] = useState<ProfileStateType>({
         fullName: '',
         username: '',
-        id: '',
+        _id: '',
         email: '',
         bio: '',
         image: null,
@@ -33,7 +35,9 @@ const UpdateProfile = (props: UpdateProfileScreenTypes) => {
 
     useEffect(() => {
         getProfileAPI();
-        getPermissionCamera();
+        if (Platform.OS === 'android') {
+            getPermissionCamera();
+        }
     }, []);
 
     const getPermissionCamera = async () => {
@@ -47,7 +51,11 @@ const UpdateProfile = (props: UpdateProfileScreenTypes) => {
     const getProfileAPI = () => {
         getProfile().then(res => {
             console.log(res.data);
-            setProfile(res.data);
+            setProfile({
+                ...profile,
+                ...res.data,
+                image: JSON.parse(res.data.image)
+            });
             setIsUpload(false);
         }).catch(err => {
             console.log(err);
@@ -122,13 +130,20 @@ const UpdateProfile = (props: UpdateProfileScreenTypes) => {
             console.log(res);
             setIsLoading(false);
             getProfileAPI();
+            setIsUpload(false);
+            setToast({
+                isShow: true,
+                isError: false,
+                title: 'Success',
+                message: 'Edit Profile successfully',
+            });
         }).catch(err => {
             console.log(err);
             setIsLoading(false);
         });
     }
 
-    console.log('cek image : ', profile);
+    console.log('cek : ', profile.image !== null && !isUpload ? profile.image.url : isUpload ? imageURL : 'https://i.pravatar.cc/300');
 
     return (
         <BottomSheetModalProvider>
@@ -138,7 +153,7 @@ const UpdateProfile = (props: UpdateProfileScreenTypes) => {
                     <View style={styles.container}>
                         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                             <TouchableOpacity style={styles.wrapperAvatar} onPress={presentModal}>
-                                <Image style={styles.avatar} source={{ uri: profile.image !== null && !isUpload ? `${imageHTTP}/${profile.image}` : profile.image && isUpload ? imageURL : 'https://i.pravatar.cc/300' }} />
+                                <Image style={styles.avatar} source={{ uri: profile.image !== null && !isUpload ? profile.image.url : profile.image && isUpload ? imageURL : 'https://i.pravatar.cc/300' }} />
                             </TouchableOpacity>
                             <InputText value={profile.fullName} onChangeText={(value: string) => onHandleChange('fullName', value)} label="Full Name" />
                             <InputText value={profile.username} onChangeText={(value: string) => onHandleChange('username', value)} label="Username" />

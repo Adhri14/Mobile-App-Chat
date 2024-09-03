@@ -28,7 +28,7 @@ const ListMessage = (props: ListMessageTypes) => {
                         <View style={styles.newMessage}>
                             <Text style={styles.textNewMessage}>{countNewMessage}</Text>
                         </View>
-                    ) : <View style={[styles.newMessage, { backgroundColor: 'transparent' }]} />}
+                    ) : null}
                 </View>
             )}
         </Pressable>

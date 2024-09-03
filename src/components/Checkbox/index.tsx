@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 import { colors, fonts } from "../../assets/theme";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 type CheckboxTypes = {
     value: boolean;
@@ -23,7 +24,7 @@ const Checkbox = ({ value, onValueChange }: CheckboxTypes) => {
         <Pressable onPress={onCheckbox} style={styles.container}>
             <View style={[styles.checkbox, { backgroundColor: colors.gray }]}>
                 <Animated.View style={[styles.checkbox, { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: colors.primary, opacity: fadeBox }]} />
-                {value ? <Text style={styles.iconCheck}>&#10004;</Text> : null}
+                {value ? <Ionicons size={14} color={'white'} name="checkmark-sharp" /> : null}
             </View>
             <Text onPress={onCheckbox} style={styles.agree}>I’m agree to The <Text style={styles.bold}>Terms of Service</Text> and <Text style={styles.bold}>Privacy Policy</Text></Text>
         </Pressable>
@@ -45,7 +46,7 @@ const styles = StyleSheet.create({
     },
     iconCheck: {
         color: 'white',
-        fontSize: 10
+        fontSize: 10,
     },
     agree: {
         fontSize: 12,

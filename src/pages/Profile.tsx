@@ -5,18 +5,18 @@ import { ProfileScreenTypes } from "../router";
 import { colors, fonts } from "../assets/theme";
 import Button from "../components/Button";
 import { clearDataStorage } from "../utils/localStorage";
-import { followUserAPI, getProfile, getProfileById } from "../api/user";
+import { followUserAPI, getProfile, getProfileById, unFollowUserAPI } from "../api/user";
 import { imageURL } from "../utils/httpService";
 import HeadStatisticProfile from "../components/HeadStatisticProfile";
 import { useIsFocused } from "@react-navigation/native";
 
 export type ProfileStateType = {
-    fullName: string;
-    username: string;
-    _id: string;
-    email: string;
-    image: any;
-    bio: string;
+    fullName?: string;
+    username?: string;
+    _id?: string;
+    email?: string;
+    image?: any;
+    bio?: string;
     followers?: string[];
     following?: string[];
 }
@@ -43,7 +43,11 @@ const Profile = ({ navigation, route }: ProfileScreenTypes) => {
                 getDataUser();
             } else {
                 getProfile().then(res => {
-                    setProfile(res.data);
+                    setProfile({
+                        ...profile,
+                        ...res.data,
+                        image: JSON.parse(res.data.image)
+                    });
                 }).catch(err => {
                     console.log(err);
                 });
@@ -53,7 +57,11 @@ const Profile = ({ navigation, route }: ProfileScreenTypes) => {
 
     const getDataUser = () => {
         getProfileById(userId).then(res => {
-            setProfile(res.data);
+            setProfile({
+                ...profile,
+                ...res.data,
+                image: JSON.parse(res.data.image)
+            });
         }).catch(err => {
             console.log(err);
         });
@@ -71,18 +79,27 @@ const Profile = ({ navigation, route }: ProfileScreenTypes) => {
 
     const onAction = () => {
         if (userId !== '') {
-            onFollowing();
+            const isFollowing = profile?.followers?.find(item => item === userLogin)
+            if (isFollowing) {
+                onUnFollowing();
+            } else {
+                onFollowing();
+            }
         } else {
             navigation.navigate('UpdateProfile');
         }
     }
 
     const onFollowing = () => {
-        console.log('follow');
-        console.log('user view : ', userId);
-        console.log('user login : ', userLogin);
         followUserAPI(userId).then((res) => {
-            console.log(res);
+            getDataUser();
+        }).catch(err => {
+            console.log(err);
+        });
+    }
+
+    const onUnFollowing = () => {
+        unFollowUserAPI(userId).then((res) => {
             getDataUser();
         }).catch(err => {
             console.log(err);
@@ -94,16 +111,16 @@ const Profile = ({ navigation, route }: ProfileScreenTypes) => {
             <Header isBack titleHeader={profile?.username || 'Akun'} color={colors.black} fontSizeTitle={16} onPress={() => navigation.goBack()} />
             <View style={styles.container}>
                 <HeadStatisticProfile
-                    image={{ uri: profile?.image !== null ? `${imageURL}/${profile?.image}` : 'https://i.pravatar.cc/300' }}
+                    image={{ uri: profile?.image !== null ? `${profile?.image?.url}` : 'https://i.pravatar.cc/300' }}
                     totalPosting={34}
                     totalFollowers={Number(profile?.followers?.length) || 0}
                     totalFollowing={Number(profile?.following?.length) || 0}
-                    fullname={profile?.fullName}
+                    fullname={`${profile?.fullName}`}
                     onNavigate={onAction}
                     bio={profile?.bio}
                     logout={logout}
                     isFollowing={Boolean(profile?.followers?.find(item => item === userLogin))}
-                    onMessage={() => navigation.navigate('ChatRoom')}
+                    onMessage={() => navigation.navigate('ChatRoom', { profile, chatId: '' })}
                 />
                 {Boolean(logout) && <Button style={[{ backgroundColor: 'red' }]} label="Keluar" onPress={onSignOut} />}
             </View>

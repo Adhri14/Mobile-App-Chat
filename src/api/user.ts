@@ -19,3 +19,7 @@ export const getUsersAPI = (params?: any) => {
 export const followUserAPI = (id: string) => {
     return postAPI(`user/follow/${id}`, {});
 }
+
+export const unFollowUserAPI = (id: string) => {
+    return postAPI(`user/unfollow/${id}`, {});
+}

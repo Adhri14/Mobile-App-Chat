@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import Router from "./src/router.tsx";
-import { NativeModules, PermissionsAndroid, Platform } from "react-native";
+import { NativeModules, PermissionsAndroid, Platform, SafeAreaView } from "react-native";
 import { navigationRef } from "./src/utils/navigationRef.ts";
 import messaging from "@react-native-firebase/messaging";
 import pushNotification from "./src/utils/pushNotification.ts";
@@ -77,13 +77,17 @@ const App = () => {
     });
 
     const requestNotifPerm = async () => {
-        await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+        if (Platform.OS === 'android') {
+            await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+        }
     }
 
     return (
         <NavigationContainer ref={navigationRef} onReady={() => Platform.OS === 'android' && NativeModules.SplashScreenModule?.hide()}>
-            <Router />
-            <FlashMessage position="top" />
+            <SafeAreaView style={{ flex: 1 }}>
+                <Router />
+                <FlashMessage position="top" />
+            </SafeAreaView>
         </NavigationContainer>
     );
 }

@@ -8,7 +8,7 @@ import ForgotPassword from "./pages/ForgotPassword.tsx";
 import Header from "./components/Header/index.tsx";
 import ChatRoom from "./pages/ChatRoom.tsx";
 import VerificationOTP from "./pages/VerificationOTP.tsx";
-import Profile from "./pages/Profile.tsx";
+import Profile, { ProfileStateType } from "./pages/Profile.tsx";
 import UpdateProfile from "./pages/UpdateProfile.tsx";
 import ListUsers from "./pages/ListUsers.tsx";
 
@@ -20,7 +20,7 @@ export type RootStackParamList = {
     Home: undefined;
     ForgotPassword: undefined;
     VerificationOTP: { email: string };
-    ChatRoom: undefined;
+    ChatRoom: { profile?: ProfileStateType };
     Profile: undefined;
     UpdateProfile: undefined;
     ListUsers: undefined;
@@ -46,8 +46,15 @@ const Router = () => {
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="ChatRoom" component={ChatRoom} />
             <Stack.Screen name="Profile" component={Profile} />
-            <Stack.Screen name="UpdateProfile" component={UpdateProfile} />
-            <Stack.Screen name="ListUsers" component={ListUsers} />
+            <Stack.Screen name="UpdateProfile" component={UpdateProfile} options={{ presentation: 'modal' }} />
+            <Stack.Screen name="ListUsers" component={ListUsers} options={{ presentation: 'modal' }} />
+            {/* <Stack.Group>
+                
+            </Stack.Group> */}
+            {/* <Stack.Group screenOptions={{ presentation: 'modal' }}>
+                <Stack.Screen name="UpdateProfile" component={UpdateProfile} />
+                <Stack.Screen name="ListUsers" component={ListUsers} />
+            </Stack.Group> */}
         </Stack.Navigator>
     );
 }

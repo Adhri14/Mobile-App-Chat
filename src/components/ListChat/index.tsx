@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
 import { colors, fonts } from "../../assets/theme";
+import HighlightText from "../HiglightText";
 
 type ListChatTypes = {
     isMe?: boolean;
@@ -11,12 +12,11 @@ type ListChatTypes = {
 
 const ListChat = ({ isMe, message, time, statusRead }: ListChatTypes) => {
 
-    console.log(isMe);
-
     if (isMe) {
         return (
             <View style={styles.containerIsMe}>
-                <Text style={styles.message}>{message}</Text>
+                {/* <Text style={styles.message}>{message}</Text> */}
+                <HighlightText text={message} />
                 <View style={styles.lastSeen}>
                     <Text style={styles.time}>{time}</Text>
                     <Image source={statusRead ? require('../../assets/images/icon-check-double.png') : require('../../assets/images/icon-check.png')} style={styles.iconLastSeen} />
@@ -26,10 +26,11 @@ const ListChat = ({ isMe, message, time, statusRead }: ListChatTypes) => {
     }
     return (
         <View style={styles.containerOther}>
-            <Text style={styles.message}>{message}</Text>
+            {/* <Text style={styles.message}>{message}</Text> */}
+            <HighlightText text={message} />
             <View style={styles.lastSeen}>
                 <Text style={styles.time}>{time}</Text>
-                <Image source={statusRead ? require('../../assets/images/icon-check-double.png') : require('../../assets/images/icon-check.png')} style={styles.iconLastSeen} />
+                {/* <Image source={statusRead ? require('../../assets/images/icon-check-double.png') : require('../../assets/images/icon-check.png')} style={styles.iconLastSeen} /> */}
             </View>
         </View>
     );
@@ -39,7 +40,7 @@ export default ListChat;
 
 const styles = StyleSheet.create({
     containerOther: {
-        backgroundColor: colors.white,
+        backgroundColor: colors.gray,
         borderRadius: 20,
         borderBottomLeftRadius: 0,
         padding: 10,

@@ -39,12 +39,14 @@ const ListUsers = ({ navigation }: ListUsersScreenTypes) => {
 
     const getUsers = () => {
         getUsersAPI({ search }).then(res => {
-            console.log(`${search} : `, res.data);
             setRefreshing(false);
             const newArray: ProfileStateType[] = [];
             if (Array.isArray(res.data)) {
                 res.data.map((item: ProfileStateType) => {
-                    newArray.push(item);
+                    newArray.push({
+                        ...item,
+                        image: item.image !== '' || item.image !== null ? JSON.parse(item.image) : null
+                    });
                 });
             }
             setUsers(newArray);
@@ -74,8 +76,8 @@ const ListUsers = ({ navigation }: ListUsersScreenTypes) => {
                     data={users}
                     renderItem={({ item }) => (
                         <ListMessage
-                            image={item.image !== null ? { uri: `${imageURL}/${item.image}` } : undefined}
-                            name={item.fullName}
+                            image={item.image !== null ? { uri: `${item.image?.url}` } : undefined}
+                            name={`${item.fullName}`}
                             message={`@${item.username}`}
                             onPress={() => navigation.navigate('Profile', { logout: false, userId: item._id })}
                         />
