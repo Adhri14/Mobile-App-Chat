@@ -1,20 +1,21 @@
+import { useIsFocused } from "@react-navigation/native";
+import moment from "moment";
 import React, { ReactNode, useEffect, useState } from "react";
-import { View, Text, StyleSheet, StatusBar, ImageBackground, FlatList, Platform, KeyboardAvoidingView, Keyboard } from "react-native";
-import Header from "../components/Header";
+import { FlatList, ImageBackground, KeyboardAvoidingView, Platform, StatusBar, StyleSheet, View } from "react-native";
+import { getListMessageAPI, sendMessageAPI, updateStatusReadAPI } from "../api/chat";
+import { getProfile } from "../api/user";
 import { colors } from "../assets/theme";
-import { ChatRoomScreenTypes } from "../router";
+import Header from "../components/Header";
 import InputChat from "../components/InputChat";
 import ListChat from "../components/ListChat";
-import { getListChatsAPI, getListMessageAPI, sendMessageAPI, updateStatusReadAPI } from "../api/chat";
-import { ProfileStateType } from "./Profile";
-import moment from "moment";
-import { getDataStorage } from "../utils/localStorage";
-import { getProfile } from "../api/user";
-import { useIsFocused } from "@react-navigation/native";
+import { ChatRoomScreenTypes } from "../router";
+import Pusher from 'pusher-js/react-native';
 
 const WrapperImage = ({ children }: { children: ReactNode }) => {
     return Platform.OS == 'ios' ? <View style={styles.container}>{children}</View> : <ImageBackground source={require('../assets/images/wallpaper.webp')} resizeMode="cover" style={styles.container}>{children}</ImageBackground>;
 }
+
+const KEY_CHAT = "conversation-chats-";
 
 const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
     let { profile, chatId }: any = route.params;
@@ -38,6 +39,30 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
             });
         }
     }, [isFocused]);
+
+    useEffect(() => {
+        Pusher.logToConsole = false;
+
+        var pusher = new Pusher('50e720f2e2719b2951b5', {
+            cluster: 'ap1',
+        });
+
+        if (chatId || newChatId) {
+            var channel = pusher.subscribe(`${KEY_CHAT}-channel-${chatId || newChatId}`);
+            channel.bind(`${KEY_CHAT}-event-${chatId || newChatId}`, function (data: any) {
+                // setMessages((prev: any) => [data.data, ...prev]);
+                setMessages((prev: any) => {
+                    const exists = prev.some((message: any) => message._id === data.data._id);
+                    if (exists) {
+                        // If the message already exists, return the previous state
+                        return prev;
+                    }
+                    // If not, add the new message at the beginning
+                    return [data.data, ...prev];
+                });
+            });
+        }
+    }, []);
 
     const getMessages = (chtId: string = '') => {
         const params = {

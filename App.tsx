@@ -1,16 +1,19 @@
-import React, { useEffect } from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import Router from "./src/router.tsx";
-import { NativeModules, PermissionsAndroid, Platform, SafeAreaView } from "react-native";
-import { navigationRef } from "./src/utils/navigationRef.ts";
 import messaging from "@react-native-firebase/messaging";
-import pushNotification from "./src/utils/pushNotification.ts";
-import { setDataStorage } from "./src/utils/localStorage.ts";
+import { NavigationContainer } from "@react-navigation/native";
+import React, { useEffect } from "react";
+import { NativeModules, PermissionsAndroid, Platform, SafeAreaView } from "react-native";
+import { getBaseOsSync, getDeviceNameSync, getDeviceSync, getFirstInstallTimeSync, getIpAddressSync, getSystemName, getSystemVersion, getUniqueIdSync, getUserAgentSync } from 'react-native-device-info';
 import FlashMessage from "react-native-flash-message";
+import Router from "./src/router.tsx";
+import { setDataStorage } from "./src/utils/localStorage.ts";
+import { navigationRef } from "./src/utils/navigationRef.ts";
+import pushNotification from "./src/utils/pushNotification.ts";
+import { registerDeviceAPI } from "./src/api/device.ts";
 
 const App = () => {
     useEffect(() => {
         requestNotifPerm();
+        registerDevice();
     }, []);
 
     useEffect(() => {
@@ -29,7 +32,6 @@ const App = () => {
 
         const getToken = async () => {
             const token = await messaging().getToken();
-            console.log(token);
             await setDataStorage('device_token', { token });
         }
 
@@ -82,9 +84,42 @@ const App = () => {
         }
     }
 
+    const registerDevice = async () => {
+        try {
+            const deviceId = getUniqueIdSync();
+            const baseOS = getBaseOsSync();
+            const device = getDeviceSync();
+            const deviceName = getDeviceNameSync();
+            const ipAddress = getIpAddressSync();
+            const firstInstallTime = getFirstInstallTimeSync();
+            const systemName = await getSystemName();
+            const systemVersion = await getSystemVersion();
+            const userAgent = getUserAgentSync();
+
+            const payload = {
+                deviceId,
+                baseOS,
+                device,
+                deviceName,
+                ipAddress,
+                firstInstallTime,
+                systemName,
+                systemVersion,
+                userAgent,
+            };
+
+            console.log('cek payload : ', payload);
+
+            const res = await registerDeviceAPI(payload);
+            console.log(res);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     return (
         <NavigationContainer ref={navigationRef} onReady={() => Platform.OS === 'android' && NativeModules.SplashScreenModule?.hide()}>
-            <SafeAreaView style={{ flex: 1 }}>
+            <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
                 <Router />
                 <FlashMessage position="top" />
             </SafeAreaView>

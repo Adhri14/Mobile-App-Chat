@@ -4,7 +4,7 @@ import { navigationRef } from "./navigationRef";
 import { clearDataStorage, getDataStorage } from "./localStorage";
 // import { store } from "../state/redux";
 
-export const baseURL = "http://192.168.1.39:4000/api/"; // development
+export const baseURL = "http://192.168.1.10:4000/api/"; // development
 // export const baseURL = "https://api-chat-mobile-adhri14s-projects.vercel.app/api/"; // production
 export const imageURL = "http://www.apimobilechat.appsku.cloud/uploads";
 // export const imageURL = "https://api-chat-mobile-adhri14s-projects.vercel.app/public/uploads";

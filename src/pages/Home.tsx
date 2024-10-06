@@ -12,6 +12,9 @@ import { getListChatsAPI } from "../api/chat";
 import ListEmpty from "../components/ListEmpty";
 import { colors, fonts } from "../assets/theme";
 import moment from "moment";
+import Pusher from "pusher-js/react-native";
+
+const KEY_MESSAGE = "conversation-messages-";
 
 const Home = ({ navigation }: HomeScreenTypes) => {
     const isFocused = useIsFocused();
@@ -25,6 +28,21 @@ const Home = ({ navigation }: HomeScreenTypes) => {
             getListChat();
         }
     }, [isFocused]);
+
+    useEffect(() => {
+        Pusher.logToConsole = false;
+
+        var pusher = new Pusher('50e720f2e2719b2951b5', {
+            cluster: 'ap1',
+        });
+
+        var channel = pusher.subscribe(`${KEY_MESSAGE}-channel-${profile?._id}`);
+        channel.bind(`${KEY_MESSAGE}-event-${profile?._id}`, function (data: any) {
+            // setMessages((prev: any) => [data.data, ...prev]);
+            console.log('cek data : ', data);
+            setChats((prev: any) => [...data.data, ...prev]);
+        });
+    }, [profile?._id]);
 
     const getProfileAPI = () => {
         getProfile().then(res => {
@@ -46,6 +64,8 @@ const Home = ({ navigation }: HomeScreenTypes) => {
         });
     }
 
+    console.log('cek chats : ', chats);
+
     return (
         <View style={styles.page}>
             <StatusBar backgroundColor="white" barStyle="dark-content" />
@@ -60,6 +80,7 @@ const Home = ({ navigation }: HomeScreenTypes) => {
                         </View>
                     }
                     data={chats}
+                    extraData={chats}
                     renderItem={({ item }) => {
                         const image = JSON.parse(item.participants?.find((e: any) => e._id !== profile?._id).image);
                         return (

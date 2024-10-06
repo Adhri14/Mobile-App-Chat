@@ -78,7 +78,7 @@ const pushNotification = {
             pushNotification.device_id = fcmToken;
         } catch (error) {
             // alert(error?.message);
-            Alert.alert('Attention', 'Sorry, an error occurred when retrieving the notification key ID');
+            // Alert.alert('Attention', 'Sorry, an error occurred when retrieving the notification key ID');
         }
     },
 
@@ -91,7 +91,7 @@ const pushNotification = {
             importance: Importance.HIGH,
             soundName: 'default',
             vibrate: true
-        });
+        }, (created) => console.log(created));
     },
 
     showNotification(id: any, title: any, message: any, data = {}, options = {}) {

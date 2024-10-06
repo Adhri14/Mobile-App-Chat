@@ -510,7 +510,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 5Y86D7DUL7;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = MobileChat/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -523,7 +523,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.daemon.chatapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.daemon.econify;
 				PRODUCT_NAME = MobileChat;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -538,7 +538,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 5Y86D7DUL7;
 				INFOPLIST_FILE = MobileChat/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -550,7 +550,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.daemon.chatapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.daemon.econify;
 				PRODUCT_NAME = MobileChat;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
