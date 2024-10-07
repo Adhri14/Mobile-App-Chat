@@ -109,6 +109,8 @@ export const postAPIBasic = async (endtpoint: string, body: any, paramConfig?: a
 export const getAPI = async (endtpoint: string, paramConfig?: any) => {
     const auth = await getDataStorage('token_user');
 
+    console.log('cek token : ', auth?.token);
+
     const config = {
         ...paramConfig,
         headers: {

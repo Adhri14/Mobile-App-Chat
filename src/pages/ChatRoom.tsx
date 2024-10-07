@@ -24,6 +24,9 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
     const [messages, setMessages] = useState<any>([]);
     const [userIdLogin, setUserIdLogin] = useState('');
     const [newChatId, setNewChatId] = useState('');
+    const [page, setPage] = useState(0);
+    const [totalPage, setTotalPage] = useState(0);
+    const [isPaginate, setIsPaginate] = useState(false);
     // const [showTabbar, setShowTabbar] = useState(true);
 
     useEffect(() => {
@@ -64,14 +67,23 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
         }
     }, []);
 
+    useEffect(() => {
+        if (isPaginate) {
+            getMessages();
+        }
+    }, [isPaginate])
+
     const getMessages = (chtId: string = '') => {
         const params = {
             chatId: chatId || chtId,
             userId: profile._id,
-        }
+            offset: page,
+            limit: 10
+        };
         getListMessageAPI(params).then(res => {
-            setMessages(res.data);
-            // setNewChatId(res.data[0].chat?._id);
+            setMessages((prev: any) => page === 0 ? res.data : [...prev, ...res.data]);
+            setTotalPage(res.pagination);
+            setIsPaginate(false);
         }).catch(err => {
             console.log('list message : ', err);
         });
@@ -84,7 +96,6 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
         });
     }
 
-    console.log('cek id : ', newChatId);
     const onSubmit = () => {
         let data;
         if (chatId || newChatId) {
@@ -119,6 +130,17 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
         });
     }
 
+    const onEndReach = () => {
+        if (page == totalPage) {
+            return
+        }
+
+        setPage(page + 1);
+        setIsPaginate(true);
+    }
+
+    console.log(page);
+
     return (
         <View style={styles.page}>
             <StatusBar backgroundColor="white" barStyle="dark-content" />
@@ -139,6 +161,8 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
                         )}
                         inverted
                         showsVerticalScrollIndicator={false}
+                        onEndReached={onEndReach}
+                        onEndReachedThreshold={0.9}
                     />
                     <InputChat value={message} onChangeText={(value: string) => setMessage(value)} onSend={onSubmit} />
                 </View>

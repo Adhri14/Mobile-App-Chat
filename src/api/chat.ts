@@ -5,7 +5,7 @@ export const getListChatsAPI = (params?: any) => {
 }
 
 export const getListMessageAPI = (params?: any) => {
-    return getAPI(`chat/messages?chatId=${params.chatId}&userId=${params.userId}`);
+    return getAPI(`chat/messages?chatId=${params.chatId}&userId=${params.userId}&offset=${params.offset}&limit=${params.limit}`);
 }
 
 export const sendMessageAPI = (data?: any) => {

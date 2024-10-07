@@ -27,7 +27,7 @@ const InputChat = (props: InputChatTypes) => {
 
     return (
         <View style={[styles.container, { marginBottom: Platform.OS === 'ios' && !showTabbar ? 70 : Platform.OS === 'android' ? 20 : 0 }]}>
-            <TextInput multiline value={value} onChangeText={onChangeText} placeholder="Type your message" style={styles.input} placeholderTextColor={colors.black} />
+            <TextInput multiline value={value} onChangeText={onChangeText} autoCorrect={false} placeholder="Type your message" style={styles.input} placeholderTextColor={colors.black} />
             <TouchableOpacity style={styles.button} onPress={onSend}>
                 <Image source={require('../../assets/images/icon-send.png')} style={styles.image} />
             </TouchableOpacity>
