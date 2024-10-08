@@ -1,19 +1,17 @@
-import React, { useRef, useState } from "react";
-import { View, Text, StyleSheet, StatusBar, FlatList, useWindowDimensions, Dimensions } from "react-native";
-import BadgeIcon from "../components/BadgeIcon";
-import { colors, fonts } from "../assets/theme";
-import InputText from "../components/InputText";
-import Button from "../components/Button";
-import { ForgotPasswordScreenTypes, VerificationOTPScreenTypes } from "../router";
-import Header from "../components/Header";
+import React, { useState } from "react";
+import { Dimensions, StatusBar, StyleSheet, Text, View } from "react-native";
 import { resendOTPAPI, verficationAPI } from "../api/auth";
-import { setDataStorage } from "../utils/localStorage";
+import { colors, fonts } from "../assets/theme";
+import BadgeIcon from "../components/BadgeIcon";
+import Button from "../components/Button";
+import InputText from "../components/InputText";
+import { VerificationOTPScreenTypes } from "../router";
 
 const { width } = Dimensions.get('window');
 
 const VerificationOTP = ({ navigation, route }: VerificationOTPScreenTypes) => {
     const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
-    const { email }: { email: string } = route.params;
+    const { email }: any = route.params;
 
     const [form, setForm] = useState({
         email,

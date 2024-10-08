@@ -10,6 +10,7 @@ import InputChat from "../components/InputChat";
 import ListChat from "../components/ListChat";
 import { ChatRoomScreenTypes } from "../router";
 import Pusher from 'pusher-js/react-native';
+import useForceUpdate from "../hooks/useForceUpdate";
 
 const WrapperImage = ({ children }: { children: ReactNode }) => {
     return Platform.OS == 'ios' ? <View style={styles.container}>{children}</View> : <ImageBackground source={require('../assets/images/wallpaper.webp')} resizeMode="cover" style={styles.container}>{children}</ImageBackground>;
@@ -19,6 +20,7 @@ const KEY_CHAT = "conversation-chats-";
 
 const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
     let { profile, chatId }: any = route.params;
+    const { forceUpdate } = useForceUpdate();
     const isFocused = useIsFocused();
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState<any>([]);
@@ -52,10 +54,17 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
 
         if (chatId || newChatId) {
             var channel = pusher.subscribe(`${KEY_CHAT}-channel-${chatId || newChatId}`);
+
             channel.bind(`${KEY_CHAT}-event-${chatId || newChatId}`, function (data: any) {
                 // setMessages((prev: any) => [data.data, ...prev]);
+                if (data.data === null) {
+                    console.log('masuk sini nggk?');
+                    forceUpdate();
+                    setMessage((prev: any) => prev);
+                    return;
+                }
                 setMessages((prev: any) => {
-                    const exists = prev.some((message: any) => message._id === data.data._id);
+                    const exists = prev.some((message: any) => message._id === data.data?._id);
                     if (exists) {
                         // If the message already exists, return the previous state
                         return prev;
@@ -78,7 +87,7 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
             chatId: chatId || chtId,
             userId: profile._id,
             offset: page,
-            limit: 10
+            limit: 20
         };
         getListMessageAPI(params).then(res => {
             setMessages((prev: any) => page === 0 ? res.data : [...prev, ...res.data]);
@@ -156,7 +165,7 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
                                 isMe={item.sender?._id === userIdLogin}
                                 message={item.message}
                                 statusRead={item.statusRead}
-                                time={moment(new Date(item.createdAt)).fromNow()}
+                                time={moment(new Date(item.createdAt)).fromNow(true)}
                             />
                         )}
                         inverted
@@ -164,7 +173,9 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
                         onEndReached={onEndReach}
                         onEndReachedThreshold={0.9}
                     />
-                    <InputChat value={message} onChangeText={(value: string) => setMessage(value)} onSend={onSubmit} />
+                    <View style={{ paddingTop: 10 }}>
+                        <InputChat value={message} onChangeText={(value: string) => setMessage(value)} onSend={onSubmit} />
+                    </View>
                 </View>
             </KeyboardAvoidingView>
         </View>

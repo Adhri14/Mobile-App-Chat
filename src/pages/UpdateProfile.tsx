@@ -1,17 +1,16 @@
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Alert, Image, PermissionsAndroid, Platform, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { ProfileStateType } from "./Profile";
-import { UpdateProfileScreenTypes } from "../router";
-import { getProfile, updateProfile } from "../api/user";
-import Header from "../components/Header";
-import { colors, fonts } from "../assets/theme";
-import { imageURL as imageHTTP } from "../utils/httpService";
-import InputText from "../components/InputText";
-import Button from "../components/Button";
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet"
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
+import { getProfile, updateProfile } from "../api/user";
+import { colors, fonts } from "../assets/theme";
+import Button from "../components/Button";
+import Header from "../components/Header";
+import InputText from "../components/InputText";
 import useToast from "../hooks/useToast";
+import { UpdateProfileScreenTypes } from "../router";
+import { ProfileStateType } from "./Profile";
 
 const UpdateProfile = (props: UpdateProfileScreenTypes) => {
     const { navigation } = props;

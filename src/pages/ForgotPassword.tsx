@@ -1,12 +1,12 @@
 import React, { useRef, useState } from "react";
-import { View, Text, StyleSheet, StatusBar, FlatList, useWindowDimensions, Dimensions } from "react-native";
-import BadgeIcon from "../components/BadgeIcon";
-import { colors, fonts } from "../assets/theme";
-import InputText from "../components/InputText";
-import Button from "../components/Button";
-import { ForgotPasswordScreenTypes } from "../router";
-import Header from "../components/Header";
+import { Dimensions, FlatList, StatusBar, StyleSheet, Text, View } from "react-native";
 import { forgotPasswordAPI, resendOTPAPI } from "../api/auth";
+import { colors, fonts } from "../assets/theme";
+import BadgeIcon from "../components/BadgeIcon";
+import Button from "../components/Button";
+import Header from "../components/Header";
+import InputText from "../components/InputText";
+import { ForgotPasswordScreenTypes } from "../router";
 
 const { width } = Dimensions.get('window');
 

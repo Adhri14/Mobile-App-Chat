@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
+import { singInAPI } from "../api/auth";
 import { colors, fonts } from "../assets/theme";
 import BadgeIcon from "../components/BadgeIcon";
 import Button from "../components/Button";
 import InputText from "../components/InputText";
-import { SignInScreenTypes } from "../router";
-import { singInAPI } from "../api/auth";
-import { clearDataStorage, getDataStorage, setDataStorage } from "../utils/localStorage";
 import useToast from "../hooks/useToast";
+import { SignInScreenTypes } from "../router";
+import { getDataStorage, setDataStorage } from "../utils/localStorage";
 
 const SignIn = ({ navigation }: SignInScreenTypes) => {
     const { setToast } = useToast();

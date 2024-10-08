@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Pressable, Image } from "react-native";
-import Header from "../components/Header";
-import { ProfileScreenTypes } from "../router";
-import { colors, fonts } from "../assets/theme";
-import Button from "../components/Button";
-import { clearDataStorage } from "../utils/localStorage";
-import { followUserAPI, getProfile, getProfileById, unFollowUserAPI } from "../api/user";
-import { imageURL } from "../utils/httpService";
-import HeadStatisticProfile from "../components/HeadStatisticProfile";
 import { useIsFocused } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, View } from "react-native";
+import { followUserAPI, getProfile, getProfileById, unFollowUserAPI } from "../api/user";
+import { colors } from "../assets/theme";
+import Button from "../components/Button";
+import Header from "../components/Header";
+import HeadStatisticProfile from "../components/HeadStatisticProfile";
+import { ProfileScreenTypes } from "../router";
+import { clearDataStorage } from "../utils/localStorage";
 
 export type ProfileStateType = {
     fullName?: string;

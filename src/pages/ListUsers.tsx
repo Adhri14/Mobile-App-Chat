@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, FlatList, StatusBar, TextInput } from "react-native";
-import Header from "../components/Header";
-import SearchInput from "../components/SearchInput";
-import ListMessage from "../components/ListMessage";
-import ListEmpty from "../components/ListEmpty";
-import { ListUsersScreenTypes } from "../router";
+import { FlatList, StatusBar, StyleSheet, View } from "react-native";
 import { getUsersAPI } from "../api/user";
+import Header from "../components/Header";
+import ListEmpty from "../components/ListEmpty";
+import ListMessage from "../components/ListMessage";
+import SearchInput from "../components/SearchInput";
+import { ListUsersScreenTypes } from "../router";
 import { ProfileStateType } from "./Profile";
-import { imageURL } from "../utils/httpService";
 
 const ListUsers = ({ navigation }: ListUsersScreenTypes) => {
     const [users, setUsers] = useState<ProfileStateType[]>([]);

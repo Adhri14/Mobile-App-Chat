@@ -1,18 +1,17 @@
-import { FlatList, StatusBar, StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import Header from "../components/Header";
-import SearchInput from "../components/SearchInput";
-import ListMessage from "../components/ListMessage";
-import { HomeScreenTypes } from "../router";
-import { getProfile } from "../api/user";
-import { ProfileStateType } from "./Profile";
-import { imageURL } from "../utils/httpService";
 import { useIsFocused } from "@react-navigation/native";
-import { getListChatsAPI } from "../api/chat";
-import ListEmpty from "../components/ListEmpty";
-import { colors, fonts } from "../assets/theme";
 import moment from "moment";
 import Pusher from "pusher-js/react-native";
+import React, { useEffect, useState } from "react";
+import { FlatList, StatusBar, StyleSheet, Text, View } from "react-native";
+import { getListChatsAPI } from "../api/chat";
+import { getProfile } from "../api/user";
+import { colors, fonts } from "../assets/theme";
+import Header from "../components/Header";
+import ListEmpty from "../components/ListEmpty";
+import ListMessage from "../components/ListMessage";
+import SearchInput from "../components/SearchInput";
+import { HomeScreenTypes } from "../router";
+import { ProfileStateType } from "./Profile";
 
 const KEY_MESSAGE = "conversation-messages-";
 
@@ -21,6 +20,7 @@ const Home = ({ navigation }: HomeScreenTypes) => {
     const [profile, setProfile] = useState<ProfileStateType>();
     const [chats, setChats] = useState<any[]>([]);
     const [search, setSearch] = useState('');
+    const [refreshing, setRefreshing] = useState(false);
 
     useEffect(() => {
         if (isFocused) {
@@ -43,6 +43,13 @@ const Home = ({ navigation }: HomeScreenTypes) => {
         });
     }, [profile?._id]);
 
+    useEffect(() => {
+        if (refreshing) {
+            getListChat();
+            getProfileAPI();
+        }
+    }, [refreshing]);
+
     const getProfileAPI = () => {
         getProfile().then(res => {
             setProfile({
@@ -50,6 +57,7 @@ const Home = ({ navigation }: HomeScreenTypes) => {
                 ...res.data,
                 image: JSON.parse(res.data.image)
             });
+            setRefreshing(false);
         }).catch(err => {
             console.log(err);
         });
@@ -58,9 +66,14 @@ const Home = ({ navigation }: HomeScreenTypes) => {
     const getListChat = () => {
         getListChatsAPI().then(res => {
             setChats(res.data);
+            setRefreshing(false);
         }).catch(err => {
             console.log('list chat api : ', err);
         });
+    }
+
+    const onRefresh = () => {
+        setRefreshing(true);
     }
 
     return (
@@ -76,6 +89,8 @@ const Home = ({ navigation }: HomeScreenTypes) => {
                             <Text style={styles.title}>Chats</Text>
                         </View>
                     }
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
                     data={chats}
                     keyExtractor={(item: any) => item?._id}
                     renderItem={({ item }) => {
@@ -85,7 +100,7 @@ const Home = ({ navigation }: HomeScreenTypes) => {
                                 image={{ uri: image.url }}
                                 name={item.participants?.find((e: any) => e._id !== profile?._id).fullName}
                                 message={item.lastMessage}
-                                time={moment(new Date(item.createdAt)).fromNow(false)}
+                                time={moment(new Date(item.createdAt)).fromNow(true)}
                                 isNewMessage={item.totalStatusChatUnRead > 0}
                                 countNewMessage={item.totalStatusChatUnRead}
                                 onPress={() => navigation.navigate('ChatRoom', { profile: item.participants?.find((e: any) => e._id !== profile?._id), chatId: item._id })}

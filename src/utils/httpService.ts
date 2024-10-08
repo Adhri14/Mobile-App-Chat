@@ -2,6 +2,7 @@ import { CommonActions } from "@react-navigation/native";
 import axios, { AxiosError, isAxiosError } from "axios";
 import { navigationRef } from "./navigationRef";
 import { clearDataStorage, getDataStorage } from "./localStorage";
+import { Alert } from "react-native";
 // import { store } from "../state/redux";
 
 export const baseURL = "http://192.168.1.10:4000/api/"; // development
@@ -78,7 +79,7 @@ export const postAPI = async (endtpoint: string, body: any, paramConfig?: any) =
         };
     } catch (error: any) {
         if (statusCodeDanger.includes(error.response.status)) {
-            redirect();
+            Alert.alert('Attention', 'Sesi login anda berakhir. Silahkan login kembali', [{ text: 'OK', onPress: () => redirect(), style: 'default' }]);
         }
         throw errorResponse(error?.response?.data, error?.status!);
     }
@@ -109,8 +110,6 @@ export const postAPIBasic = async (endtpoint: string, body: any, paramConfig?: a
 export const getAPI = async (endtpoint: string, paramConfig?: any) => {
     const auth = await getDataStorage('token_user');
 
-    console.log('cek token : ', auth?.token);
-
     const config = {
         ...paramConfig,
         headers: {
@@ -132,8 +131,7 @@ export const getAPI = async (endtpoint: string, paramConfig?: any) => {
         };
     } catch (error: any) {
         if (statusCodeDanger.includes(error.response.status)) {
-            console.log(statusCodeDanger.includes(error.response.status));
-            redirect();
+            Alert.alert('Attention', 'Sesi login anda berakhir. Silahkan login kembali', [{ text: 'OK', onPress: () => redirect(), style: 'default' }]);
         }
         throw errorResponse(error?.response?.data, error?.status!);
     }
