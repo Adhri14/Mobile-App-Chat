@@ -5,8 +5,8 @@ import { clearDataStorage, getDataStorage } from "./localStorage";
 import { Alert } from "react-native";
 // import { store } from "../state/redux";
 
-export const baseURL = "http://192.168.1.10:4000/api/"; // development
-// export const baseURL = "https://api-chat-mobile-adhri14s-projects.vercel.app/api/"; // production
+// export const baseURL = "http://192.168.1.10:4000/api/"; // development
+export const baseURL = "https://api-chat-mobile-adhri14s-projects.vercel.app/api/"; // production
 export const imageURL = "http://www.apimobilechat.appsku.cloud/uploads";
 // export const imageURL = "https://api-chat-mobile-adhri14s-projects.vercel.app/public/uploads";
 const statusCodeDanger = [401];
@@ -36,7 +36,7 @@ export const redirect = async () => {
     }
 
     // redirect
-    await navigationRef?.current?.dispatch(
+    return await navigationRef?.current?.dispatch(
         CommonActions.reset({
             index: 0,
             routes: [{ name: "SignIn" }],
