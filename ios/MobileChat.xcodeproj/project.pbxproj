@@ -9,15 +9,15 @@
 /* Begin PBXBuildFile section */
 		00AA4EE52DF082E8F00CA058 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 291A61CA50D9FB043A3E8BEA /* PrivacyInfo.xcprivacy */; };
 		00E356F31AD99517003FC87E /* MobileChatTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* MobileChatTests.m */; };
-		0581808F06DF47AD8063105E /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 86F78709BEE142759A5DDA95 /* Poppins-Medium.ttf */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		30DA3DA82914491EB6E7FB13 /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 911A1F60C1C04FFD975558F4 /* Poppins-Regular.ttf */; };
 		6717F98D6CFC72B327E29D1F /* Pods_MobileChat_MobileChatTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C53F49692F430910A4B44676 /* Pods_MobileChat_MobileChatTests.framework */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		914FDADC0DDA452DA9454D01 /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BD1400CFAD66492BBD79BA85 /* Poppins-SemiBold.ttf */; };
 		A5B47CAFB1175118A9110217 /* Pods_MobileChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83FCFDC8A666F9BC6D402F80 /* Pods_MobileChat.framework */; };
+		D01201CF2CC4C867008EA8F4 /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 86F78709BEE142759A5DDA95 /* Poppins-Medium.ttf */; };
+		D01201D02CC4C867008EA8F4 /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 911A1F60C1C04FFD975558F4 /* Poppins-Regular.ttf */; };
+		D01201D12CC4C867008EA8F4 /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BD1400CFAD66492BBD79BA85 /* Poppins-SemiBold.ttf */; };
 		D013B83A2C834AEB00C912B4 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D013B8392C834AEB00C912B4 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
@@ -52,6 +52,7 @@
 		C53F49692F430910A4B44676 /* Pods_MobileChat_MobileChatTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MobileChat_MobileChatTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C85EF172492AF67D2194D1F3 /* Pods-MobileChat.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MobileChat.debug.xcconfig"; path = "Target Support Files/Pods-MobileChat/Pods-MobileChat.debug.xcconfig"; sourceTree = "<group>"; };
 		CF6346F91CE74D7CB86B266D /* Pods-MobileChat.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MobileChat.release.xcconfig"; path = "Target Support Files/Pods-MobileChat/Pods-MobileChat.release.xcconfig"; sourceTree = "<group>"; };
+		D01201CD2CC4C537008EA8F4 /* hermes.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = hermes.xcframework; path = "Pods/hermes-engine/destroot/Library/Frameworks/universal/hermes.xcframework"; sourceTree = "<group>"; };
 		D013B8392C834AEB00C912B4 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FC018BD329E2AACC2A071E92 /* Pods-MobileChat-MobileChatTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MobileChat-MobileChatTests.debug.xcconfig"; path = "Target Support Files/Pods-MobileChat-MobileChatTests/Pods-MobileChat-MobileChatTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -123,6 +124,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D01201CD2CC4C537008EA8F4 /* hermes.xcframework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				83FCFDC8A666F9BC6D402F80 /* Pods_MobileChat.framework */,
 				C53F49692F430910A4B44676 /* Pods_MobileChat_MobileChatTests.framework */,
@@ -267,12 +269,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D01201CF2CC4C867008EA8F4 /* Poppins-Medium.ttf in Resources */,
+				D01201D02CC4C867008EA8F4 /* Poppins-Regular.ttf in Resources */,
+				D01201D12CC4C867008EA8F4 /* Poppins-SemiBold.ttf in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				00AA4EE52DF082E8F00CA058 /* PrivacyInfo.xcprivacy in Resources */,
-				0581808F06DF47AD8063105E /* Poppins-Medium.ttf in Resources */,
-				30DA3DA82914491EB6E7FB13 /* Poppins-Regular.ttf in Resources */,
-				914FDADC0DDA452DA9454D01 /* Poppins-SemiBold.ttf in Resources */,
 				D013B83A2C834AEB00C912B4 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

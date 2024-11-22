@@ -3,10 +3,11 @@ import axios, { AxiosError, isAxiosError } from "axios";
 import { navigationRef } from "./navigationRef";
 import { clearDataStorage, getDataStorage } from "./localStorage";
 import { Alert } from "react-native";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 // import { store } from "../state/redux";
 
-// export const baseURL = "http://192.168.1.10:4000/api/"; // development
-export const baseURL = "https://api-chat-mobile-adhri14s-projects.vercel.app/api/"; // production
+export const baseURL = "http://192.168.1.12:4000/api/"; // development
+// export const baseURL = "https://api-chat-mobile-adhri14s-projects.vercel.app/api/"; // production
 export const imageURL = "http://www.apimobilechat.appsku.cloud/uploads";
 // export const imageURL = "https://api-chat-mobile-adhri14s-projects.vercel.app/public/uploads";
 const statusCodeDanger = [401];
@@ -18,6 +19,7 @@ export const requestHttp = axios.create({
 export const redirect = async () => {
     // clear session token
     clearDataStorage(['token_user']);
+    await GoogleSignin.signOut();
 
     // handle multiple redirect
     const safeNavigation =
@@ -36,7 +38,7 @@ export const redirect = async () => {
     }
 
     // redirect
-    return await navigationRef?.current?.dispatch(
+    await navigationRef?.current?.dispatch(
         CommonActions.reset({
             index: 0,
             routes: [{ name: "SignIn" }],
@@ -44,7 +46,7 @@ export const redirect = async () => {
     );
 };
 
-const errorResponse = (data: any, messageCode: number) => {
+export const errorResponse = (data: any, messageCode: number) => {
     return {
         status: typeof data.status !== "undefined" ? data.status : messageCode,
         message:
@@ -93,6 +95,8 @@ export const postAPIBasic = async (endtpoint: string, body: any, paramConfig?: a
     try {
         const result = await requestHttp.post(endtpoint, body, config);
 
+        console.log('cek data : ', result);
+
         if (result.status === 200 || result.status === 201) {
             return result.data;
         }
@@ -103,6 +107,7 @@ export const postAPIBasic = async (endtpoint: string, body: any, paramConfig?: a
             data: result,
         };
     } catch (error: any) {
+        console.log('cek error : ', error);
         throw errorResponse(error?.response?.data, error?.status!);
     }
 };
@@ -131,7 +136,10 @@ export const getAPI = async (endtpoint: string, paramConfig?: any) => {
         };
     } catch (error: any) {
         if (statusCodeDanger.includes(error.response.status)) {
-            Alert.alert('Attention', 'Sesi login anda berakhir. Silahkan login kembali', [{ text: 'OK', onPress: () => redirect(), style: 'default' }]);
+            Alert.alert('Attention', 'Sesi login anda berakhir. Silahkan login kembali', [
+                { text: 'OK', onPress: redirect }
+            ]);
+            return;
         }
         throw errorResponse(error?.response?.data, error?.status!);
     }

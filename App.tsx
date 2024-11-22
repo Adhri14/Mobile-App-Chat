@@ -9,6 +9,7 @@ import { setDataStorage } from "./src/utils/localStorage.ts";
 import { navigationRef } from "./src/utils/navigationRef.ts";
 import pushNotification from "./src/utils/pushNotification.ts";
 import { registerDeviceAPI } from "./src/api/device.ts";
+import { RecoilRoot } from "recoil";
 
 const App = () => {
     useEffect(() => {
@@ -118,12 +119,14 @@ const App = () => {
     }
 
     return (
-        <NavigationContainer ref={navigationRef} onReady={() => Platform.OS === 'android' && NativeModules.SplashScreenModule?.hide()}>
-            <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-                <Router />
-                <FlashMessage position="top" />
-            </SafeAreaView>
-        </NavigationContainer>
+        <RecoilRoot>
+            <NavigationContainer ref={navigationRef} onReady={() => Platform.OS === 'android' && NativeModules.SplashScreenModule?.hide()}>
+                <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+                    <Router />
+                    <FlashMessage position="top" />
+                </SafeAreaView>
+            </NavigationContainer>
+        </RecoilRoot>
     );
 }
 

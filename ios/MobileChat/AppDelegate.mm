@@ -2,6 +2,7 @@
 #import <Firebase.h>
 #import <UserNotifications/UserNotifications.h>
 #import <RNCPushNotificationIOS.h>
+#import <GoogleSignIn/GoogleSignIn.h>
 
 #import <React/RCTBundleURLProvider.h>
 
@@ -17,6 +18,11 @@
   self.initialProps = @{};
 
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
+}
+
+- (BOOL)application:(UIApplication *)application openURL:(nonnull NSURL *)url options:(nonnull NSDictionary<NSString *,id> *)options {
+  // return [[FBSDKApplicationDelegate sharedInstance] application:application openURL:url options:options] || [GIDSignIn.sharedInstance handleURL:url];
+  return [GIDSignIn.sharedInstance handleURL:url];
 }
 
 // Required for the register event.

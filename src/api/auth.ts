@@ -8,6 +8,10 @@ export const singInAPI = (data: any) => {
     return postAPIBasic('auth/sign-in', data);
 }
 
+export const signInGoogleAPI = (data: any) => {
+    return postAPIBasic('auth/sign-in/google', data);
+}
+
 export const verficationAPI = (data: any) => {
     return postAPIBasic('auth/verification', data);
 }

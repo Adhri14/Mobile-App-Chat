@@ -20,6 +20,17 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.722704378686-31ct4s833n4ctcm1b121khfjakv5de7b</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -31,12 +42,10 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
 	<key>NSCameraUsageDescription</key>
 	<string>$(PRODUCT_NAME) needs access to your Camera.</string>
-
-	<!-- optionally, if you want to record audio: -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string></string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>$(PRODUCT_NAME) needs access to your Microphone.</string>
 	<key>UIAppFonts</key>

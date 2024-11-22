@@ -7,7 +7,7 @@ type HighlightTextType = {
     isBio?: boolean;
 }
 
-type Parts = {
+export type Parts = {
     text: string;
     isMatch: boolean;
 }

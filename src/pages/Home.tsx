@@ -100,7 +100,7 @@ const Home = ({ navigation }: HomeScreenTypes) => {
                                 image={{ uri: image.url }}
                                 name={item.participants?.find((e: any) => e._id !== profile?._id).fullName}
                                 message={item.lastMessage}
-                                time={moment(new Date(item.createdAt)).fromNow(true)}
+                                time={moment(new Date(item.updatedAt)).fromNow(true)}
                                 isNewMessage={item.totalStatusChatUnRead > 0}
                                 countNewMessage={item.totalStatusChatUnRead}
                                 onPress={() => navigation.navigate('ChatRoom', { profile: item.participants?.find((e: any) => e._id !== profile?._id), chatId: item._id })}

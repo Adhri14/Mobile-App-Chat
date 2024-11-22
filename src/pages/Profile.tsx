@@ -8,6 +8,7 @@ import Header from "../components/Header";
 import HeadStatisticProfile from "../components/HeadStatisticProfile";
 import { ProfileScreenTypes } from "../router";
 import { clearDataStorage } from "../utils/localStorage";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 export type ProfileStateType = {
     fullName?: string;
@@ -71,8 +72,9 @@ const Profile = ({ navigation, route }: ProfileScreenTypes) => {
         });
     }
 
-    const onSignOut = () => {
+    const onSignOut = async () => {
         clearDataStorage(['token_user']);
+        await GoogleSignin.signOut();
         navigation.reset({ index: 0, routes: [{ name: 'SignIn' }] });
     }
 

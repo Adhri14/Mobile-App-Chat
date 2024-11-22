@@ -1,22 +1,33 @@
 import { useIsFocused } from "@react-navigation/native";
 import moment from "moment";
-import React, { ReactNode, useEffect, useState } from "react";
-import { FlatList, ImageBackground, KeyboardAvoidingView, Platform, StatusBar, StyleSheet, View } from "react-native";
+import Pusher from 'pusher-js/react-native';
+import React, { ReactNode, useEffect, useRef, useState } from "react";
+import { Animated, FlatList, Image, ImageBackground, KeyboardAvoidingView, Platform, Pressable, StatusBar, StyleSheet, Text, View } from "react-native";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { getListMessageAPI, sendMessageAPI, updateStatusReadAPI } from "../api/chat";
 import { getProfile } from "../api/user";
-import { colors } from "../assets/theme";
+import { colors, fonts } from "../assets/theme";
 import Header from "../components/Header";
 import InputChat from "../components/InputChat";
 import ListChat from "../components/ListChat";
-import { ChatRoomScreenTypes } from "../router";
-import Pusher from 'pusher-js/react-native';
 import useForceUpdate from "../hooks/useForceUpdate";
+import { metaDataState, MetaDataType } from "../recoil/state";
+import { ChatRoomScreenTypes } from "../router";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import PreviewMetaChat from "../components/PreviewMetaChat";
 
 const WrapperImage = ({ children }: { children: ReactNode }) => {
     return Platform.OS == 'ios' ? <View style={styles.container}>{children}</View> : <ImageBackground source={require('../assets/images/wallpaper.webp')} resizeMode="cover" style={styles.container}>{children}</ImageBackground>;
 }
 
 const KEY_CHAT = "conversation-chats-";
+
+const initValue = {
+    title: '',
+    description: '',
+    image: '',
+    url: '',
+};
 
 const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
     let { profile, chatId }: any = route.params;
@@ -29,6 +40,11 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
     const [page, setPage] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
     const [isPaginate, setIsPaginate] = useState(false);
+    const [metaTagging, setMetaTagging] = useState<MetaDataType>(initValue);
+    const [isShowMeta, setIsShowMeta] = useState(false);
+    const metaDataValue = useRecoilValue(metaDataState);
+    const setMetaData = useSetRecoilState(metaDataState);
+    const fadeAnimation = useRef(new Animated.Value(0)).current;
     // const [showTabbar, setShowTabbar] = useState(true);
 
     useEffect(() => {
@@ -44,6 +60,32 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
             });
         }
     }, [isFocused]);
+
+    useEffect(() => {
+        if (metaDataValue?.status) {
+            setMetaTagging(metaDataValue?.data!);
+            setIsShowMeta(true);
+        } else {
+            setMetaTagging(initValue);
+            setIsShowMeta(false);
+        }
+    }, [metaDataValue?.status]);
+
+    useEffect(() => {
+        if (isShowMeta) {
+            Animated.timing(fadeAnimation, {
+                toValue: 1,
+                delay: 500,
+                useNativeDriver: true,
+            }).start();
+        } else {
+            Animated.timing(fadeAnimation, {
+                toValue: 0,
+                duration: 500,
+                useNativeDriver: true,
+            }).start();
+        }
+    }, [isShowMeta])
 
     useEffect(() => {
         Pusher.logToConsole = false;
@@ -105,6 +147,19 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
         });
     }
 
+    const onClearMeta = () => {
+        setMetaData({
+            data: {
+                title: '',
+                description: '',
+                image: '',
+                url: '',
+            },
+            status: false,
+        });
+        setIsShowMeta(false);
+    }
+
     const onSubmit = () => {
         let data;
         if (chatId || newChatId) {
@@ -112,20 +167,23 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
                 chatId: chatId || newChatId,
                 message,
                 receiver: profile._id,
-                category: 'exist'
+                category: 'exist',
+                meta: metaDataValue.status ? metaDataValue.data : null
             }
         } else {
             if (messages.length > 0) {
                 data = {
                     message,
                     receiver: profile._id,
-                    category: 'exist'
+                    category: 'exist',
+                    meta: metaDataValue.status ? metaDataValue.data : null
                 }
             } else {
                 data = {
                     message,
                     receiver: profile._id,
-                    category: 'new'
+                    category: 'new',
+                    meta: metaDataValue.status ? metaDataValue.data : null
                 }
             }
         }
@@ -134,6 +192,7 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
             getMessages(!chatId ? res.data.id : '');
             setNewChatId(res.data.id);
             setMessage('');
+            onClearMeta();
         }).catch(err => {
             console.log(err);
         });
@@ -147,8 +206,6 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
         setPage(page + 1);
         setIsPaginate(true);
     }
-
-    console.log(page);
 
     return (
         <View style={styles.page}>
@@ -166,6 +223,7 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
                                 message={item.message}
                                 statusRead={item.statusRead}
                                 time={moment(new Date(item.createdAt)).fromNow(true)}
+                                meta={item.meta}
                             />
                         )}
                         inverted
@@ -174,6 +232,7 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
                         onEndReachedThreshold={0.9}
                     />
                     <View style={{ paddingTop: 10 }}>
+                        <PreviewMetaChat fadeAnimation={fadeAnimation} onPress={onClearMeta} />
                         <InputChat value={message} onChangeText={(value: string) => setMessage(value)} onSend={onSubmit} />
                     </View>
                 </View>
@@ -191,5 +250,27 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-    }
+    },
+    containerMeta: {
+        flexDirection: 'row',
+        backgroundColor: colors.gray,
+        marginBottom: 5,
+        alignItems: 'center',
+    },
+    titleMeta: {
+        fontSize: 16,
+        fontFamily: fonts.bold,
+        color: colors.black,
+        marginBottom: 2,
+    },
+    descMeta: {
+        fontSize: 12,
+        fontFamily: fonts.normal,
+        color: colors.black,
+    },
+    urlMeta: {
+        fontSize: 8,
+        fontFamily: fonts.normal,
+        color: colors.black,
+    },
 });

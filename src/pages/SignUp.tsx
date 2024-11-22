@@ -1,4 +1,4 @@
-import { ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Image, KeyboardAvoidingView, Platform, ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import BadgeIcon from "../components/BadgeIcon";
 import { colors, fonts } from "../assets/theme";
@@ -6,8 +6,10 @@ import InputText from "../components/InputText";
 import Checkbox from "../components/Checkbox";
 import Button from "../components/Button";
 import { SignUpScreenTypes } from "../router";
-import { signUpAPI } from "../api/auth";
-import { getDataStorage } from "../utils/localStorage";
+import { signInGoogleAPI, signUpAPI } from "../api/auth";
+import { getDataStorage, setDataStorage } from "../utils/localStorage";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import Line from "../components/Line";
 
 const SignUp = ({ navigation }: SignUpScreenTypes) => {
     const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
@@ -21,6 +23,15 @@ const SignUp = ({ navigation }: SignUpScreenTypes) => {
     });
 
     useEffect(() => {
+        if (Platform.OS === 'android') {
+            GoogleSignin.configure({
+                webClientId: '722704378686-q7ftkqiimt35qg5502snfnbo1imcofb1.apps.googleusercontent.com',
+            });
+        } else if (Platform.OS === 'ios') {
+            GoogleSignin.configure({
+                iosClientId: '722704378686-31ct4s833n4ctcm1b121khfjakv5de7b.apps.googleusercontent.com',
+            });
+        }
         getDataStorage('device_token').then(res => {
             onHandleChange('deviceToken', res.token || 'abc');
         });
@@ -36,7 +47,11 @@ const SignUp = ({ navigation }: SignUpScreenTypes) => {
     const onSubmit = () => {
         // console.log(form);
         // form.deviceToken = 'abc';
-        signUpAPI(form).then(res => {
+        const body = {
+            ...form,
+            deviceToken: form.deviceToken || 'asasdasdasd'
+        }
+        signUpAPI(body).then(res => {
             console.log(res);
             setIsLoadingSubmit(false);
             navigation.replace('VerificationOTP', { email: form.email });
@@ -44,6 +59,31 @@ const SignUp = ({ navigation }: SignUpScreenTypes) => {
             setIsLoadingSubmit(false);
             console.log(err);
         })
+    }
+
+    const onGoogleSignIn = async () => {
+        setIsLoadingSubmit(true);
+        try {
+            const result = await GoogleSignin.signIn();
+            const accessToken = (await GoogleSignin.getTokens()).accessToken;
+
+            const body = {
+                fullName: result.data?.user.name,
+                email: result.data?.user.email,
+                accessToken,
+                deviceToken: form.deviceToken || 'asasdadasd'
+            };
+
+            const res = await signInGoogleAPI(body);
+            setIsLoadingSubmit(false);
+            setDataStorage('token_user', { token: res.data });
+            navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+
+        } catch (error) {
+            console.log('error login : ', error);
+            setIsLoadingSubmit(false);
+            await GoogleSignin.signOut();
+        }
     }
 
     if (isLoadingSubmit) {
@@ -91,6 +131,8 @@ const SignUp = ({ navigation }: SignUpScreenTypes) => {
                     />
                     <View style={{ height: 32 }} />
                     <Button label="Create Account" onPress={onSubmit} />
+                    <Line />
+                    <Button label="Sign Up with Google" onPress={onGoogleSignIn} icon={<Image source={require('../assets/images/ic-google.png')} style={{ width: 24, height: 24, marginRight: 10 }} />} textStyle={{ color: colors.black }} style={{ borderColor: '#ddd', backgroundColor: 'white', borderWidth: 1 }} />
                     <Text style={styles.link}>Do you have account? <Text onPress={() => navigation.navigate('SignIn')} style={styles.bold}>Sign In</Text></Text>
                 </ScrollView>
             </KeyboardAvoidingView>

@@ -1,16 +1,18 @@
-import React, { useRef } from "react";
-import { View, Text, StyleSheet, Pressable, Animated, ViewStyle, PressableProps, StyleProp, ActivityIndicator } from "react-native";
+import React, { ReactNode, useRef } from "react";
+import { View, Text, StyleSheet, Pressable, Animated, ViewStyle, PressableProps, StyleProp, ActivityIndicator, TextStyle } from "react-native";
 import { colors, fonts } from "../../assets/theme";
 
 interface ButtonTypes extends PressableProps {
     label: string;
     onPress: () => void;
     style?: StyleProp<ViewStyle>;
+    textStyle?: StyleProp<TextStyle>;
     isLoading?: boolean;
+    icon?: ReactNode;
 }
 
 const Button = (props: ButtonTypes) => {
-    const { label, onPress, style, isLoading } = props;
+    const { label, onPress, style, isLoading, icon, textStyle } = props;
     const scaleButton = useRef(new Animated.Value(1)).current;
 
     const onPressIn = () => {
@@ -33,7 +35,8 @@ const Button = (props: ButtonTypes) => {
         <Animated.View style={{ transform: [{ scale: scaleButton }] }}>
             <Pressable {...props} style={[styles.button, style]} onPress={onPressIn}>
                 {isLoading && <ActivityIndicator color='white' size="small" style={{ marginRight: 10 }} />}
-                <Text style={styles.textButton}>{isLoading ? 'Loading...' : label}</Text>
+                {icon ? icon : null}
+                <Text style={[styles.textButton, textStyle]}>{isLoading ? 'Loading...' : label}</Text>
             </Pressable>
             <View style={styles.blur} />
         </Animated.View>
@@ -44,7 +47,7 @@ export default Button;
 
 const styles = StyleSheet.create({
     button: {
-        height: 60,
+        height: 55,
         borderRadius: 14,
         backgroundColor: colors.primary,
         justifyContent: 'center',

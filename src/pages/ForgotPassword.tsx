@@ -67,7 +67,7 @@ const ForgotPassword = ({ navigation }: ForgotPasswordScreenTypes) => {
                     <BadgeIcon src={require('../assets/images/icon-email.png')} />
                     <Text style={styles.title}>Forget Password</Text>
                     <View style={{ height: 30 }} />
-                    <InputText value={form.email} onChangeText={(value: string) => onHandleChange('email', value)} label="Email/Username" />
+                    <InputText value={form.email} onChangeText={(value: string) => onHandleChange('email', value)} label="Email/Username" keyboardType="email-address" />
                     <Button label="Continue" onPress={onSubmit} />
                 </View>
             )
@@ -79,7 +79,7 @@ const ForgotPassword = ({ navigation }: ForgotPasswordScreenTypes) => {
                     <BadgeIcon src={require('../assets/images/icon-email.png')} />
                     <Text style={styles.title}>Enter OTP</Text>
                     <View style={{ height: 30 }} />
-                    <InputText value={form.otp} onChangeText={(value: string) => onHandleChange('otp', value)} label="Enter OTP" />
+                    <InputText value={form.otp} onChangeText={(value: string) => onHandleChange('otp', value)} label="Enter OTP" keyboardType="number-pad" />
                     <Button label="Continue" onPress={() => flatListRef.current?.scrollToIndex({ animated: true, index: 2 })} />
                     <Text style={styles.link}>Didn't get OTP? <Text onPress={resendOTP} style={styles.bold}>Resend OTP</Text></Text>
                 </View>
@@ -120,6 +120,7 @@ const ForgotPassword = ({ navigation }: ForgotPasswordScreenTypes) => {
                 renderItem={({ item }) => item.component}
                 pagingEnabled
                 horizontal
+                scrollEnabled={false}
                 showsHorizontalScrollIndicator={false}
                 onViewableItemsChanged={({ viewableItems }) => {
                     setCurrentIndex(Number(viewableItems[0].index));

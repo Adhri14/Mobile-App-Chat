@@ -1,26 +1,51 @@
 {
   "project_info": {
-    "project_number": "44288826863",
-    "project_id": "mobilechatapp-e6473",
-    "storage_bucket": "mobilechatapp-e6473.appspot.com"
+    "project_number": "722704378686",
+    "project_id": "mobileappchatfb",
+    "storage_bucket": "mobileappchatfb.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:44288826863:android:3375cb83a207b268f0aa1a",
+        "mobilesdk_app_id": "1:722704378686:android:50ee4ce10ebc6ee5a5da6f",
         "android_client_info": {
-          "package_name": "com.mobilechat"
+          "package_name": "com.daemon.mobilechat"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "722704378686-smf6ptauvo8b9s159amu79f4dion3r80.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.daemon.mobilechat",
+            "certificate_hash": "83618096050d702b6fe296fddc754af15b8cc0b0"
+          }
+        },
+        {
+          "client_id": "722704378686-q7ftkqiimt35qg5502snfnbo1imcofb1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyDtlcikT8m2Q99ZiVcX2Y9eZQjKv1x1Ygw"
+          "current_key": "AIzaSyB4MZb38s9x71yQM0WaL3sVvlrsRHdFkgk"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "722704378686-1mco1vngtsit46crud6aeimi9tfbutbv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "722704378686-0fqjkss25j2s56m1ldjfdtmdcfjp2lg5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.daemon.chatapp"
+              }
+            }
+          ]
         }
       }
     }
