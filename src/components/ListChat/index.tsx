@@ -14,9 +14,10 @@ type ListChatTypes = {
     media?: ResultFileTypes;
     onPreviewImage?: () => void;
     onLoadEndImage?: () => void;
+    onLongPress?: () => void;
 }
 
-const ListChat = ({ isMe, message, time, statusRead, meta, media, onPreviewImage, onLoadEndImage }: ListChatTypes) => {
+const ListChat = ({ isMe, message, time, statusRead, meta, media, onPreviewImage, onLoadEndImage, onLongPress }: ListChatTypes) => {
     const regex = /https?:\/\/[^\s]+/g; // Regex untuk URL
 
     const onOpenURL = useCallback(async (url: string) => {
@@ -30,7 +31,7 @@ const ListChat = ({ isMe, message, time, statusRead, meta, media, onPreviewImage
 
     if (isMe) {
         return (
-            <View style={styles.containerIsMe}>
+            <Pressable onLongPress={onLongPress} style={styles.containerIsMe}>
                 {/* <Text style={styles.message}>{message}</Text> */}
                 {meta ? (
                     <TouchableOpacity onPress={() => onOpenURL(meta.url)} style={{ marginBottom: 5 }} activeOpacity={0.7}>
@@ -51,11 +52,11 @@ const ListChat = ({ isMe, message, time, statusRead, meta, media, onPreviewImage
                     <Text style={styles.time}>{time}</Text>
                     <Image source={statusRead ? require('../../assets/images/icon-check-double.png') : require('../../assets/images/icon-check.png')} style={styles.iconLastSeen} />
                 </View>
-            </View>
+            </Pressable>
         );
     }
     return (
-        <View style={styles.containerOther}>
+        <Pressable onLongPress={onLongPress} style={styles.containerOther}>
             {meta ? (
                 <TouchableOpacity onPress={() => onOpenURL(meta.url)} style={{ marginBottom: 5 }} activeOpacity={0.7}>
                     {regex.test(meta.image) ? <Image source={{ uri: meta.image }} style={{ width: media?.width, height: 160, maxHeight: 280, resizeMode: 'contain' }} /> : null}
@@ -76,7 +77,7 @@ const ListChat = ({ isMe, message, time, statusRead, meta, media, onPreviewImage
                 <Text style={styles.time}>{time}</Text>
                 {/* <Image source={statusRead ? require('../../assets/images/icon-check-double.png') : require('../../assets/images/icon-check.png')} style={styles.iconLastSeen} /> */}
             </View>
-        </View>
+        </Pressable>
     );
 }
 

@@ -21,10 +21,6 @@ import useForceUpdate from "../hooks/useForceUpdate";
 import { metaDataState, MetaDataType } from "../recoil/state";
 import { ChatRoomScreenTypes } from "../router";
 
-const WrapperImage = ({ children }: { children: ReactNode }) => {
-    return Platform.OS == 'ios' ? <View style={styles.container}>{children}</View> : <ImageBackground source={require('../assets/images/wallpaper.webp')} resizeMode="cover" style={styles.container}>{children}</ImageBackground>;
-}
-
 const KEY_CHAT = "conversation-chats-";
 
 const initValue = {
@@ -57,14 +53,12 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
     const [page, setPage] = useState(0);
     const [totalPage, setTotalPage] = useState<number>(0);
     const [isPaginate, setIsPaginate] = useState(false);
-    const [metaTagging, setMetaTagging] = useState<MetaDataType>(initValue);
     const [isShowMeta, setIsShowMeta] = useState(false);
     const [showTabbar, setShowTabbar] = useState(true);
     const [isUpload, setIsUpload] = useState<boolean>(false);
     const [urlImage, setIsUrlImage] = useState<string>('');
     const [resultFile, setResultFile] = useState<ResultFileTypes>();
     const [isLoadingImage, setIsLoadingImage] = useState(false);
-    const [loadImage, setLoadImage] = useState(false);
     const [previewImage, setPreviewImage] = useState(false);
     const metaDataValue = useRecoilValue(metaDataState);
     const setMetaData = useSetRecoilState(metaDataState);
@@ -103,10 +97,8 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
 
     useEffect(() => {
         if (metaDataValue?.status) {
-            setMetaTagging(metaDataValue?.data!);
             setIsShowMeta(true);
         } else {
-            setMetaTagging(initValue);
             setIsShowMeta(false);
         }
     }, [metaDataValue?.status]);
@@ -319,7 +311,6 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
     const onPreviewImage = (url: string) => {
         setIsUrlImage(url);
         setPreviewImage(true);
-        setLoadImage(true);
     }
 
     return (
@@ -333,9 +324,8 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
                             <FlatList
                                 contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 24 }}
                                 data={messages}
-                                keyExtractor={(item: any, index: any) => index}
+                                keyExtractor={(_: any, index: any) => index}
                                 renderItem={({ item }) => {
-                                    item.loadImage = true;
                                     return (
                                         <ListChat
                                             isMe={item.sender?._id === userIdLogin}
@@ -427,7 +417,6 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
                         uri={urlImage}
                         resizeMode="contain"
                         style={{ width: '100%', height: '90%' }}
-                        onLoadEnd={() => setLoadImage(false)}
                     />
                 </ModalPreviewImage>
             </GestureHandlerRootView>
