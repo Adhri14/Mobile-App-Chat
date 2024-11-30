@@ -1,27 +1,25 @@
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { ImageZoom } from "@likashefqet/react-native-image-zoom";
 import { useIsFocused } from "@react-navigation/native";
 import moment from "moment";
 import Pusher from 'pusher-js/react-native';
 import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Animated, Dimensions, FlatList, Image, ImageBackground, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { getListMessageAPI, sendMessageAPI, updateStatusReadAPI } from "../api/chat";
+import { uploadFileAPI } from "../api/media";
 import { getProfile } from "../api/user";
 import { colors, fonts } from "../assets/theme";
 import Header from "../components/Header";
 import InputChat from "../components/InputChat";
 import ListChat from "../components/ListChat";
+import ModalPreviewImage from "../components/ModalPreviewImage";
+import PreviewMetaChat from "../components/PreviewMetaChat";
 import useForceUpdate from "../hooks/useForceUpdate";
 import { metaDataState, MetaDataType } from "../recoil/state";
 import { ChatRoomScreenTypes } from "../router";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import PreviewMetaChat from "../components/PreviewMetaChat";
-import { ProfileStateType } from "./Profile";
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { launchCamera, launchImageLibrary } from "react-native-image-picker";
-import ModalPreviewImage from "../components/ModalPreviewImage";
-import { uploadFileAPI } from "../api/media";
-import { ImageZoom } from "@likashefqet/react-native-image-zoom"
 
 const WrapperImage = ({ children }: { children: ReactNode }) => {
     return Platform.OS == 'ios' ? <View style={styles.container}>{children}</View> : <ImageBackground source={require('../assets/images/wallpaper.webp')} resizeMode="cover" style={styles.container}>{children}</ImageBackground>;
