@@ -1523,6 +1523,11 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
+"@likashefqet/react-native-image-zoom@^4.2.1":
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/@likashefqet/react-native-image-zoom/-/react-native-image-zoom-4.2.1.tgz#0596124b11e4d464c785480d95afdbdb4240b660"
+  integrity sha512-Akyms1fCAYnqGmcSNR7gr+eHnGAqajkzBwKMkA42efk9UQcL/1k38wCu9sOOB0rG7uAZ/bb4T7aLNIXqfefTFQ==
+
 "@nicolo-ribaudo/eslint-scope-5-internals@5.1.1-v1":
   version "5.1.1-v1"
   resolved "https://registry.npmjs.org/@nicolo-ribaudo/eslint-scope-5-internals/-/eslint-scope-5-internals-5.1.1-v1.tgz"

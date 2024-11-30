@@ -10,6 +10,7 @@ import { navigationRef } from "./src/utils/navigationRef.ts";
 import pushNotification from "./src/utils/pushNotification.ts";
 import { registerDeviceAPI } from "./src/api/device.ts";
 import { RecoilRoot } from "recoil";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 const App = () => {
     useEffect(() => {

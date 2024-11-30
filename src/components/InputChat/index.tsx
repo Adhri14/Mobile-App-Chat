@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, TouchableOpacity, TextInput, Image, StyleSheet, Keyboard, Platform } from "react-native";
+import { View, TouchableOpacity, TextInput, Image, StyleSheet, Keyboard, Platform, ViewStyle, StyleProp } from "react-native";
 import { colors, fonts } from "../../assets/theme";
 import { Parts } from "../HiglightText";
 import axios from "axios";
@@ -7,11 +7,16 @@ import cio from "cheerio-without-node-native";
 import { errorResponse } from "../../utils/httpService";
 import { useSetRecoilState } from "recoil";
 import { metaDataState, MetaDataType } from "../../recoil/state";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 type InputChatTypes = {
     value?: string | number | any;
     onChangeText?: (value: string) => void;
     onSend?: () => void;
+    onAddComponent?: () => void;
+    component?: boolean;
+    disabled?: boolean;
+    styleContainer?: StyleProp<ViewStyle>;
 }
 
 const initValue = {
@@ -22,22 +27,8 @@ const initValue = {
 };
 
 const InputChat = (props: InputChatTypes) => {
-    const { value, onChangeText, onSend } = props;
-    const [showTabbar, setShowTabbar] = useState(true);
+    const { value, onChangeText, onSend, disabled, onAddComponent, component = false, styleContainer } = props;
     const setMetaData = useSetRecoilState(metaDataState);
-
-    useEffect(() => {
-        const subscribeShow = Keyboard.addListener('keyboardDidShow', (event) => {
-            setShowTabbar(false);
-        });
-        const subscribeHide = Keyboard.addListener('keyboardDidHide', (event) => {
-            setShowTabbar(true);
-        });
-        return () => {
-            subscribeShow.remove();
-            subscribeHide.remove();
-        }
-    }, [showTabbar]);
 
     useEffect(() => {
         let timeout;
@@ -134,9 +125,12 @@ const InputChat = (props: InputChatTypes) => {
     }
 
     return (
-        <View style={[styles.container, { marginBottom: Platform.OS === 'ios' && !showTabbar ? 70 : Platform.OS === 'android' ? 20 : 0 }]}>
-            <TextInput multiline value={value} onChangeText={onChangeText} autoCorrect={false} placeholder="Type your message" style={styles.input} placeholderTextColor={colors.black} />
-            <TouchableOpacity style={styles.button} onPress={onSend}>
+        <View style={[styles.container, styleContainer]}>
+            {component && <TouchableOpacity onPress={onAddComponent} style={[styles.button, { backgroundColor: 'transparent', borderWidth: 1, borderColor: colors.primary, marginRight: 10 }]}>
+                <Ionicons name="add" color={colors.primary} size={24} />
+            </TouchableOpacity>}
+            <TextInput multiline value={value} onChangeText={onChangeText} autoCorrect={false} style={styles.input} placeholder={Platform.OS === 'android' ? 'Type your message' : undefined} placeholderTextColor={colors.black} />
+            <TouchableOpacity style={styles.button} onPress={onSend} disabled={disabled}>
                 <Image source={require('../../assets/images/icon-send.png')} style={styles.image} />
             </TouchableOpacity>
         </View>
@@ -153,29 +147,33 @@ const styles = StyleSheet.create({
         paddingHorizontal: 24,
     },
     button: {
-        width: 45,
-        height: 45,
-        borderRadius: 15,
+        width: 30,
+        height: 30,
+        borderRadius: 20,
         backgroundColor: colors.primary,
         justifyContent: 'center',
         alignItems: 'center',
     },
     image: {
-        width: 35,
-        height: 35,
+        width: 24,
+        height: 24,
         resizeMode: 'contain',
-        marginTop: -5,
-        marginLeft: 5
+        transform: [
+            {
+                rotate: '45deg'
+            }
+        ]
     },
     input: {
         flex: 1,
         backgroundColor: colors.gray,
         paddingHorizontal: 10,
-        marginRight: 20,
+        marginRight: 10,
         borderRadius: 10,
         fontSize: 14,
         fontFamily: fonts.normal,
-        minHeight: 45,
+        color: colors.black,
+        minHeight: 30,
         maxHeight: 80,
     }
 });

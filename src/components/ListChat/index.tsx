@@ -1,8 +1,9 @@
 import React, { useCallback } from "react";
-import { View, Text, StyleSheet, Image, Linking, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, Image, Linking, TouchableOpacity, Pressable } from "react-native";
 import { colors, fonts } from "../../assets/theme";
 import HighlightText from "../HiglightText";
 import { MetaDataType } from "../../recoil/state";
+import { ResultFileTypes } from "../../pages/ChatRoom";
 
 type ListChatTypes = {
     isMe?: boolean;
@@ -10,9 +11,12 @@ type ListChatTypes = {
     time?: string;
     statusRead?: boolean;
     meta?: MetaDataType;
+    media?: ResultFileTypes;
+    onPreviewImage?: () => void;
+    onLoadEndImage?: () => void;
 }
 
-const ListChat = ({ isMe, message, time, statusRead, meta }: ListChatTypes) => {
+const ListChat = ({ isMe, message, time, statusRead, meta, media, onPreviewImage, onLoadEndImage }: ListChatTypes) => {
     const regex = /https?:\/\/[^\s]+/g; // Regex untuk URL
 
     const onOpenURL = useCallback(async (url: string) => {
@@ -38,7 +42,11 @@ const ListChat = ({ isMe, message, time, statusRead, meta }: ListChatTypes) => {
                         </View>
                     </TouchableOpacity>
                 ) : null}
-                <HighlightText text={message} />
+                {media && <Pressable onPress={onPreviewImage}>
+                    <Image source={{ uri: media?.url }} style={{ minWidth: media?.width * 0.37, maxWidth: '90%', height: media?.height * 0.37, borderRadius: 10 }} resizeMode="contain" onLoadEnd={onLoadEndImage} />
+                </Pressable>}
+                {message && <View style={{ marginTop: media ? 10 : 0 }}>
+                    <HighlightText text={message} /></View>}
                 <View style={styles.lastSeen}>
                     <Text style={styles.time}>{time}</Text>
                     <Image source={statusRead ? require('../../assets/images/icon-check-double.png') : require('../../assets/images/icon-check.png')} style={styles.iconLastSeen} />
@@ -50,7 +58,7 @@ const ListChat = ({ isMe, message, time, statusRead, meta }: ListChatTypes) => {
         <View style={styles.containerOther}>
             {meta ? (
                 <TouchableOpacity onPress={() => onOpenURL(meta.url)} style={{ marginBottom: 5 }} activeOpacity={0.7}>
-                    {regex.test(meta.image) ? <Image source={{ uri: meta.image }} style={{ width: '100%', height: 160, maxHeight: 280, resizeMode: 'contain' }} /> : null}
+                    {regex.test(meta.image) ? <Image source={{ uri: meta.image }} style={{ width: media?.width, height: 160, maxHeight: 280, resizeMode: 'contain' }} /> : null}
                     <View style={{ paddingVertical: 10 }}>
                         <Text style={styles.metaTitle}>{meta.title}</Text>
                         <Text style={styles.metaUrl}>{meta.url}</Text>
@@ -58,8 +66,12 @@ const ListChat = ({ isMe, message, time, statusRead, meta }: ListChatTypes) => {
                     </View>
                 </TouchableOpacity>
             ) : null}
+            {media && <Pressable onPress={onPreviewImage}>
+                <Image source={{ uri: media?.url }} style={{ minWidth: media?.width * 0.3, maxWidth: '90%', height: media?.height * 0.3, borderRadius: 10 }} resizeMode="contain" onLoadEnd={onLoadEndImage} />
+            </Pressable>}
             {/* <Text style={styles.message}>{message}</Text> */}
-            <HighlightText text={message} />
+            {message && <View style={{ marginTop: media ? 10 : 0 }}>
+                <HighlightText text={message} /></View>}
             <View style={styles.lastSeen}>
                 <Text style={styles.time}>{time}</Text>
                 {/* <Image source={statusRead ? require('../../assets/images/icon-check-double.png') : require('../../assets/images/icon-check.png')} style={styles.iconLastSeen} /> */}
@@ -78,7 +90,8 @@ const styles = StyleSheet.create({
         padding: 10,
         maxWidth: '90%',
         alignSelf: 'flex-start',
-        marginBottom: 10
+        marginBottom: 10,
+        overflow: 'hidden',
     },
     containerIsMe: {
         backgroundColor: colors.primarySoft,
@@ -87,7 +100,8 @@ const styles = StyleSheet.create({
         padding: 10,
         maxWidth: '90%',
         alignSelf: 'flex-end',
-        marginBottom: 10
+        marginBottom: 10,
+        overflow: 'hidden'
     },
     message: {
         fontSize: 12,

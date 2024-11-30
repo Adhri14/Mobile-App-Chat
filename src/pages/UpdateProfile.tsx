@@ -142,8 +142,6 @@ const UpdateProfile = (props: UpdateProfileScreenTypes) => {
         });
     }
 
-    console.log('cek : ', profile.image !== null && !isUpload ? profile.image.url : isUpload ? imageURL : 'https://i.pravatar.cc/300');
-
     return (
         <BottomSheetModalProvider>
             <GestureHandlerRootView style={{ flex: 1 }}>
@@ -166,6 +164,11 @@ const UpdateProfile = (props: UpdateProfileScreenTypes) => {
                     ref={bottomSheetModalRef}
                     index={1}
                     snapPoints={snapPoints}
+                    onChange={(index) => {
+                        if (index === 0) {
+                            closeModal();
+                        }
+                    }}
                     backdropComponent={props => <BottomSheetBackdrop {...props} opacity={0.3} />}
                 >
                     <View style={styles.container}>

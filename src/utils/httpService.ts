@@ -6,7 +6,7 @@ import { Alert } from "react-native";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 // import { store } from "../state/redux";
 
-export const baseURL = "http://192.168.1.12:4000/api/"; // development
+export const baseURL = "http://192.168.1.8:4000/api/"; // development
 // export const baseURL = "https://api-chat-mobile-adhri14s-projects.vercel.app/api/"; // production
 export const imageURL = "http://www.apimobilechat.appsku.cloud/uploads";
 // export const imageURL = "https://api-chat-mobile-adhri14s-projects.vercel.app/public/uploads";

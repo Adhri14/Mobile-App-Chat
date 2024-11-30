@@ -22,6 +22,8 @@ const Home = ({ navigation }: HomeScreenTypes) => {
     const [search, setSearch] = useState('');
     const [refreshing, setRefreshing] = useState(false);
 
+    let pusher;
+
     useEffect(() => {
         if (isFocused) {
             getProfileAPI();
@@ -30,18 +32,19 @@ const Home = ({ navigation }: HomeScreenTypes) => {
     }, [isFocused]);
 
     useEffect(() => {
-        Pusher.logToConsole = false;
+        if (!profile?._id) return;
+        Pusher.logToConsole = true;
 
-        var pusher = new Pusher('50e720f2e2719b2951b5', {
+        pusher = new Pusher('50e720f2e2719b2951b5', {
             cluster: 'ap1',
         });
 
-        var channel = pusher.subscribe(`${KEY_MESSAGE}-channel`);
-        channel.bind(`${KEY_MESSAGE}-event`, function (data: any) {
+        var channel = pusher.subscribe(`${KEY_MESSAGE}-channel-${profile?._id}`);
+        channel.bind(`${KEY_MESSAGE}-event-${profile?._id}`, function (data: any) {
             // setMessages((prev: any) => [data.data, ...prev]);
             setChats((prev: any) => [...data.data]);
         });
-    }, [profile?._id]);
+    }, [pusher, profile?._id]);
 
     useEffect(() => {
         if (refreshing) {
