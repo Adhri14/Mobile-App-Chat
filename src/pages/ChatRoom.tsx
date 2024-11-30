@@ -23,13 +23,6 @@ import { ChatRoomScreenTypes } from "../router";
 
 const KEY_CHAT = "conversation-chats-";
 
-const initValue = {
-    title: '',
-    description: '',
-    image: '',
-    url: '',
-};
-
 export type ResultFileTypes = {
     userId: string;
     width: number;
