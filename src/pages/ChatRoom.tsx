@@ -250,7 +250,6 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
             totalPage
         })
         if (totalPage < page) {
-            console.log('stop end reach');
             setIsPaginate(false);
             return;
         }
