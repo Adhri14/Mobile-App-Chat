@@ -425,8 +425,8 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
                     }}>
                         <Text style={{ color: colors.white, fontSize: 30, lineHeight: 35 }}>&times;</Text>
                     </Pressable>
-                    <Image
-                        source={{ uri: urlImage }}
+                    <ImageZoom
+                        uri={urlImage}
                         resizeMode="contain"
                         style={{ width: '100%', height: '90%' }}
                         onLoadEnd={() => setLoadImage(false)}
