@@ -77,7 +77,8 @@ const SignUp = ({ navigation }: SignUpScreenTypes) => {
             const res = await signInGoogleAPI(body);
             setIsLoadingSubmit(false);
             setDataStorage('token_user', { token: res.data });
-            navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+            // navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+            navigation.replace('Home');
 
         } catch (error) {
             console.log('error login : ', error);

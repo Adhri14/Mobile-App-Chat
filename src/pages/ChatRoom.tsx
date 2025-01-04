@@ -1,11 +1,12 @@
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import { ImageZoom } from "@likashefqet/react-native-image-zoom";
 import { useIsFocused } from "@react-navigation/native";
 import moment from "moment";
 import Pusher from 'pusher-js/react-native';
 import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Animated, Dimensions, FlatList, Image, ImageBackground, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { ActivityIndicator, Animated, Dimensions, Image, ImageBackground, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
+import { GestureHandlerRootView, FlatList } from "react-native-gesture-handler";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { getListMessageAPI, sendMessageAPI, updateStatusReadAPI } from "../api/chat";
@@ -51,12 +52,16 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
     const [isUpload, setIsUpload] = useState<boolean>(false);
     const [urlImage, setIsUrlImage] = useState<string>('');
     const [resultFile, setResultFile] = useState<ResultFileTypes>();
+    const [isReplyMessage, setIsReplyMessage] = useState<boolean>(false);
+    const [replayMessage, setReplayMessage] = useState<any>();
     const [isLoadingImage, setIsLoadingImage] = useState(false);
     const [previewImage, setPreviewImage] = useState(false);
+    const [showButtonScroll, setShowButtonScroll] = useState(false);
     const metaDataValue = useRecoilValue(metaDataState);
     const setMetaData = useSetRecoilState(metaDataState);
     const fadeAnimation = useRef(new Animated.Value(0)).current;
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+    const flatlistRef = useRef<FlatList<any>>(null);
 
     const snapPoints = useMemo(() => [0.1, '20%'], []);
 
@@ -193,7 +198,8 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
                 receiver: profile._id,
                 category: 'exist',
                 meta: metaDataValue.status ? metaDataValue.data : null,
-                media: resultFile ? resultFile : null
+                media: resultFile ? resultFile : null,
+                replyMessage: replayMessage ? replayMessage._id : null
             }
         } else {
             if (messages.length > 0) {
@@ -203,6 +209,7 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
                     category: 'exist',
                     meta: metaDataValue.status ? metaDataValue.data : null,
                     media: resultFile ? resultFile : null,
+                    replyMessage: replayMessage ? replayMessage._id : null
                 }
             } else {
                 data = {
@@ -210,7 +217,8 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
                     receiver: profile._id,
                     category: 'new',
                     meta: metaDataValue.status ? metaDataValue.data : null,
-                    media: resultFile ? resultFile : null
+                    media: resultFile ? resultFile : null,
+                    replyMessage: replayMessage ? replayMessage._id : null
                 }
             }
         }
@@ -222,6 +230,8 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
             setIsUpload(false);
             setIsUrlImage('');
             setResultFile(undefined);
+            setReplayMessage(undefined);
+            setIsReplyMessage(false);
         }).catch(err => {
             console.log(err);
         });
@@ -306,6 +316,21 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
         setPreviewImage(true);
     }
 
+    const onReplyMessage = (item: any) => {
+        setIsReplyMessage(true);
+        setReplayMessage(item);
+    }
+
+    const onCloseReply = () => {
+        setIsReplyMessage(false);
+        setReplayMessage(undefined);
+    }
+
+    const onNavigate = useCallback((item: any) => {
+        const index = messages.findIndex((e: any) => e._id === item.replyMessage?._id);
+        index !== -1 ? flatlistRef.current?.scrollToIndex({ animated: true, index, viewPosition: 0.5 }) : null;
+    }, [messages]);
+
     return (
         <BottomSheetModalProvider>
             <GestureHandlerRootView style={{ flex: 1 }}>
@@ -315,7 +340,17 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
                     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
                         <View style={{ flex: 1 }}>
                             <FlatList
-                                contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 24 }}
+                                ref={flatlistRef}
+                                onScroll={({ nativeEvent }) => {
+                                    if (nativeEvent.contentOffset.y > 800) {
+                                        setShowButtonScroll(true);
+                                    } else if (nativeEvent.contentOffset.y < 100) {
+                                        setShowButtonScroll(false);
+                                    } else if (nativeEvent.contentOffset.y === 0) {
+                                        setShowButtonScroll(false);
+                                    }
+                                }}
+                                contentContainerStyle={{ paddingHorizontal: 24 }}
                                 data={messages}
                                 keyExtractor={(_: any, index: any) => index}
                                 renderItem={({ item }) => {
@@ -329,6 +364,11 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
                                             media={item.media ? item.media : undefined}
                                             onPreviewImage={() => item.media ? onPreviewImage(item.media?.url) : null}
                                             onLoadEndImage={() => item.loadImage = false}
+                                            onReply={() => onReplyMessage(item)}
+                                            replyMessage={item.replyMessage}
+                                            userIdLogin={userIdLogin}
+                                            profile={profile}
+                                            onGoTo={() => onNavigate(item)}
                                         />
                                     );
                                 }}
@@ -342,7 +382,23 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
                                     </View>) : null
                                 )}
                             />
+                            {showButtonScroll && (
+                                <Pressable style={styles.btnFloat} onPress={() => flatlistRef.current?.scrollToIndex({ animated: true, index: 0 })}>
+                                    <Ionicons name="arrow-down-outline" size={20} color={colors.primary} />
+                                </Pressable>
+                            )}
                             <View style={{ paddingTop: 10 }}>
+                                {isReplyMessage && (
+                                    <View style={[styles.containerMeta, { borderLeftWidth: 5, borderLeftColor: replayMessage?.sender?._id === userIdLogin ? colors.primary : colors.danger }]}>
+                                        <View style={{ flex: 1, padding: 10 }}>
+                                            <Text style={[styles.titleMeta, { fontSize: 12, color: replayMessage?.sender?._id === userIdLogin ? colors.primary : colors.danger }]} numberOfLines={1}>{replayMessage?.sender?._id === userIdLogin ? 'Kamu' : profile?.fullName}</Text>
+                                            <Text style={[styles.descMeta]} numberOfLines={1}>{replayMessage?.message ? replayMessage?.message : 'Foto'}</Text>
+                                        </View>
+                                        <Pressable style={{ paddingRight: 24 }} onPress={onCloseReply}>
+                                            <Ionicons name="close-circle-outline" size={24} color={colors.black} />
+                                        </Pressable>
+                                    </View>
+                                )}
                                 <PreviewMetaChat fadeAnimation={fadeAnimation} onPress={onClearMeta} />
                                 <InputChat value={message} component onChangeText={(value: string) => setMessage(value)} onSend={onSubmit} disabled={message.trim() === ''} onAddComponent={presentModal} styleContainer={{ marginBottom: Platform.OS === 'ios' && !showTabbar ? 70 : Platform.OS === 'android' ? 20 : 0 }} />
                             </View>
@@ -488,5 +544,17 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         zIndex: 999
+    },
+    btnFloat: {
+        position: 'absolute',
+        zIndex: 50,
+        bottom: 50,
+        right: 0,
+        backgroundColor: colors.gray,
+        paddingRight: 20,
+        paddingLeft: 20,
+        paddingVertical: 10,
+        borderTopLeftRadius: 10,
+        borderBottomLeftRadius: 10,
     }
 });

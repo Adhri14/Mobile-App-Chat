@@ -72,7 +72,8 @@ const SignIn = ({ navigation }: SignInScreenTypes) => {
             console.log(res);
             setIsLoadingSubmit(false);
             setDataStorage('token_user', { token: res.data });
-            navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+            // navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+            navigation.replace('Home');
         }).catch(err => {
             console.log(err);
             setIsLoading(false);
@@ -105,7 +106,8 @@ const SignIn = ({ navigation }: SignInScreenTypes) => {
                 const res = await signInGoogleAPI(body);
                 setIsLoadingSubmit(false);
                 setDataStorage('token_user', { token: res.data });
-                navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+                // navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+                navigation.replace('Home');
             } else {
                 await GoogleSignin.signOut();
             }

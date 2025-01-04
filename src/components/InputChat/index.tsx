@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { View, TouchableOpacity, TextInput, Image, StyleSheet, Keyboard, Platform, ViewStyle, StyleProp } from "react-native";
+import React, { forwardRef, useEffect, useState } from "react";
+import { View, TouchableOpacity, TextInput, Image, StyleSheet, Keyboard, Platform, ViewStyle, StyleProp, TextInputProps } from "react-native";
 import { colors, fonts } from "../../assets/theme";
 import { Parts } from "../HiglightText";
 import axios from "axios";
@@ -9,7 +9,7 @@ import { useSetRecoilState } from "recoil";
 import { metaDataState, MetaDataType } from "../../recoil/state";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-type InputChatTypes = {
+type InputChatTypes = TextInputProps & {
     value?: string | number | any;
     onChangeText?: (value: string) => void;
     onSend?: () => void;
@@ -26,7 +26,7 @@ const initValue = {
     url: '',
 };
 
-const InputChat = (props: InputChatTypes) => {
+const InputChat = forwardRef<InputChatTypes, TextInput>((props, ref) => {
     const { value, onChangeText, onSend, disabled, onAddComponent, component = false, styleContainer } = props;
     const setMetaData = useSetRecoilState(metaDataState);
 
@@ -129,13 +129,13 @@ const InputChat = (props: InputChatTypes) => {
             {component && <TouchableOpacity onPress={onAddComponent} style={[styles.button, { backgroundColor: 'transparent', borderWidth: 1, borderColor: colors.primary, marginRight: 10 }]}>
                 <Ionicons name="add" color={colors.primary} size={24} />
             </TouchableOpacity>}
-            <TextInput multiline value={value} onChangeText={onChangeText} autoCorrect={false} style={styles.input} placeholder={Platform.OS === 'android' ? 'Type your message' : undefined} placeholderTextColor={colors.black} />
+            <TextInput ref={ref} {...props} multiline value={value} onChangeText={onChangeText} autoCorrect={false} style={styles.input} placeholder={Platform.OS === 'android' ? 'Type your message' : undefined} placeholderTextColor={colors.black} />
             <TouchableOpacity style={styles.button} onPress={onSend} disabled={disabled}>
                 <Image source={require('../../assets/images/icon-send.png')} style={styles.image} />
             </TouchableOpacity>
         </View>
     );
-}
+});
 
 export default InputChat;
 
