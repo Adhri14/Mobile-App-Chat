@@ -10,8 +10,10 @@ import { signInGoogleAPI, signUpAPI } from "../api/auth";
 import { getDataStorage, setDataStorage } from "../utils/localStorage";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import Line from "../components/Line";
+import useToast from "../hooks/useToast";
 
 const SignUp = ({ navigation }: SignUpScreenTypes) => {
+    const { setToast } = useToast();
     const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
     const [form, setForm] = useState({
         fullName: '',
@@ -57,6 +59,12 @@ const SignUp = ({ navigation }: SignUpScreenTypes) => {
             navigation.replace('VerificationOTP', { email: form.email });
         }).catch(err => {
             setIsLoadingSubmit(false);
+            setToast({
+                isError: true,
+                isShow: true,
+                title: 'Error',
+                message: err.message,
+            });
             console.log(err);
         })
     }
