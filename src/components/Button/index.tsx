@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
         bottom: 0,
         left: 20,
         right: 20,
-        backgroundColor: "transparent",
+        backgroundColor: '#fff',
         zIndex: -1,
         borderRadius: 10,
         shadowColor: colors.primary,

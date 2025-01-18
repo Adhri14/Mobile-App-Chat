@@ -8,10 +8,11 @@ interface InputTextType extends TextInputProps {
     onChangeText: (text: string) => void;
     inputPassword?: boolean;
     textArea?: boolean;
+    message?: string;
 }
 
 const InputText = (props: InputTextType) => {
-    const { value, onChangeText, label, inputPassword = false, textArea = false } = props;
+    const { value, onChangeText, label, inputPassword = false, textArea = false, message } = props;
     const [isActive, setIsActive] = useState(false);
     const textTransform = useRef(new Animated.Value(0)).current;
     const scaleText = useRef(new Animated.Value(1)).current;
@@ -63,28 +64,31 @@ const InputText = (props: InputTextType) => {
     }
 
     return (
-        <View style={[styles.container, { height: textArea ? 100 : 60 }]}>
-            <Animated.Text style={[styles.label, { transform: [{ translateY: textTransform }, { scale: scaleText }], backgroundColor: isActive ? colors.gray : 'transparent', paddingHorizontal: 10 }]}>{label}</Animated.Text>
-            {textArea ? (
-                <TextInput
-                    style={[styles.input, { verticalAlign: 'top' }]}
+        <>
+            <View style={[styles.container, { height: textArea ? 100 : 60, marginBottom: !message ? 20 : 0 }]}>
+                <Animated.Text style={[styles.label, { transform: [{ translateY: textTransform }, { scale: scaleText }], backgroundColor: isActive ? colors.gray : 'transparent', paddingHorizontal: 10 }]}>{label}</Animated.Text>
+                {textArea ? (
+                    <TextInput
+                        style={[styles.input, { verticalAlign: 'top' }]}
+                        onFocus={onFocus}
+                        onBlur={onBlur}
+                        selectionColor={colors.primarySoft}
+                        multiline
+                        {...props}
+                    />
+                ) : <TextInput
+                    style={styles.input}
+                    // value={value}
                     onFocus={onFocus}
                     onBlur={onBlur}
+                    // onChangeText={onChangeText}
+                    secureTextEntry={inputPassword}
                     selectionColor={colors.primarySoft}
-                    multiline
                     {...props}
-                />
-            ) : <TextInput
-                style={styles.input}
-                // value={value}
-                onFocus={onFocus}
-                onBlur={onBlur}
-                // onChangeText={onChangeText}
-                secureTextEntry={inputPassword}
-                selectionColor={colors.primarySoft}
-                {...props}
-            />}
-        </View >
+                />}
+            </View >
+            {message && <Text style={styles.error}>{message}</Text>}
+        </>
     );
 }
 
@@ -96,7 +100,6 @@ const styles = StyleSheet.create({
         borderRadius: 14,
         paddingHorizontal: 20,
         position: 'relative',
-        marginBottom: 20
     },
     label: {
         position: 'absolute',
@@ -112,4 +115,5 @@ const styles = StyleSheet.create({
         fontFamily: fonts.normal,
         color: colors.dark2
     },
+    error: { fontSize: 12, fontFamily: fonts.medium, color: colors.danger, marginBottom: 20, marginTop: 5 }
 });

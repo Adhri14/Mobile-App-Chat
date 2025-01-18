@@ -15,6 +15,7 @@ import useToast from "../hooks/useToast";
 const SignUp = ({ navigation }: SignUpScreenTypes) => {
     const { setToast } = useToast();
     const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
+    const [inputErrors, setInputErrors] = useState<{ [key: string]: string }>();
     const [form, setForm] = useState({
         fullName: '',
         username: '',
@@ -44,6 +45,10 @@ const SignUp = ({ navigation }: SignUpScreenTypes) => {
             ...form,
             [key]: value,
         });
+        setInputErrors({
+            ...inputErrors,
+            [key]: ''
+        });
     }
 
     const onSubmit = () => {
@@ -59,6 +64,10 @@ const SignUp = ({ navigation }: SignUpScreenTypes) => {
             navigation.replace('VerificationOTP', { email: form.email });
         }).catch(err => {
             setIsLoadingSubmit(false);
+            console.log(err.data);
+            if (err.status === 422) {
+                setInputErrors(err.data?.errors);
+            }
             setToast({
                 isError: true,
                 isShow: true,
@@ -116,23 +125,29 @@ const SignUp = ({ navigation }: SignUpScreenTypes) => {
                         label="Full name"
                         value={form.fullName}
                         onChangeText={(value: string) => onHandleChange('fullName', value)}
+                        message={inputErrors && inputErrors.fullName}
                     />
                     <InputText
                         label="Username"
                         value={form.username}
                         onChangeText={(value: string) => onHandleChange('username', value)}
+                        message={inputErrors && inputErrors.username}
+                        autoCapitalize="none"
                     />
                     <InputText
                         label="Email"
                         value={form.email}
                         onChangeText={(value: string) => onHandleChange('email', value)}
                         keyboardType="email-address"
+                        message={inputErrors && inputErrors.email}
+                        autoCapitalize="none"
                     />
                     <InputText
                         label="Password"
                         value={form.password}
                         onChangeText={(value: string) => onHandleChange('password', value)}
                         inputPassword
+                        message={inputErrors && inputErrors.password}
                     />
                     <Checkbox
                         value={form.isAgree}
