@@ -26,7 +26,7 @@ const initValue = {
     url: '',
 };
 
-const InputChat = forwardRef<InputChatTypes, TextInput>((props, ref) => {
+const InputChat = forwardRef<TextInput, InputChatTypes>((props, ref) => {
     const { value, onChangeText, onSend, disabled, onAddComponent, component = false, styleContainer } = props;
     const setMetaData = useSetRecoilState(metaDataState);
 
@@ -59,7 +59,6 @@ const InputChat = forwardRef<InputChatTypes, TextInput>((props, ref) => {
                         status: true,
                     });
                     const resMeta = await getMetaData(item.text);
-                    console.log('cek : ', resMeta.data);
                     setMetaData({
                         status: resMeta.status === 200,
                         isLoading: false,
@@ -83,16 +82,17 @@ const InputChat = forwardRef<InputChatTypes, TextInput>((props, ref) => {
 
     }
 
-    const splitTextByRegex = (text: string, regex: any) => {
+    const splitTextByRegex = (text: string, regex: RegExp) => {
         const newParts: Parts[] = [];
         let lastIndex = 0;
 
-        text.replace(regex, (match?: string, index?: number) => {
+        text.replace(regex, (match, index) => {
             if (Number(index) > lastIndex) {
                 newParts.push({ text: text.slice(lastIndex, Number(index)), isMatch: false });
             }
             newParts.push({ text: String(match), isMatch: true });
             lastIndex = Number(index) + Number(match?.length);
+            return "";
         });
 
         if (lastIndex < text.length) {

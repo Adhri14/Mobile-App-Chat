@@ -53,13 +53,13 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     button: {
-        width: 50,
-        height: 50,
+        width: 34,
+        height: 34,
         justifyContent: 'center',
     },
     image: {
-        width: 30,
-        height: 30
+        width: 24,
+        height: 24
     },
     title: {
         fontSize: 24,

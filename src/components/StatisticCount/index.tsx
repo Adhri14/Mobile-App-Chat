@@ -1,20 +1,21 @@
 import React from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, Pressable } from "react-native";
 import { colors, fonts } from "../../assets/theme";
 
 type StatisticCountType = {
     total: number;
     label: string;
+    onPress?: () => void;
 }
 
 const StatisticCount = (props: StatisticCountType) => {
-    const { total, label } = props;
+    const { total, label, onPress } = props;
 
     return (
-        <View style={styles.wrapperStatistic}>
+        <Pressable onPress={onPress} style={styles.wrapperStatistic}>
             <Text style={styles.totalStatistic}>{total}</Text>
             <Text style={styles.labelStatistic}>{label}</Text>
-        </View>
+        </Pressable>
     );
 }
 

@@ -78,7 +78,7 @@ const ListUsers = ({ navigation }: ListUsersScreenTypes) => {
                             image={item.image !== null ? { uri: `${item.image?.url}` } : undefined}
                             name={`${item.fullName}`}
                             message={`@${item.username}`}
-                            onPress={() => navigation.navigate('Profile', { logout: false, userId: item._id })}
+                            onPress={() => navigation.navigate('Profile', { logout: false, userId: item._id as string })}
                         />
                     )}
                     ListEmptyComponent={() => <ListEmpty message="Belum ada teman" />}

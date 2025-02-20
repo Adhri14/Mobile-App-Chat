@@ -6,7 +6,7 @@ import moment from "moment";
 import Pusher from 'pusher-js/react-native';
 import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Animated, Dimensions, Image, ImageBackground, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
-import { GestureHandlerRootView, FlatList } from "react-native-gesture-handler";
+import { GestureHandlerRootView, FlatList, gestureHandlerRootHOC } from "react-native-gesture-handler";
 import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { getListMessageAPI, sendMessageAPI, updateStatusReadAPI } from "../api/chat";
@@ -35,6 +35,15 @@ export type ResultFileTypes = {
     type: string;
     url: string;
 }
+
+const ContentImagePreview = gestureHandlerRootHOC(({ urlImage }: any) => (
+    <ImageZoom
+        uri={urlImage}
+        resizeMode="contain"
+        style={{ width: '100%', height: '90%' }}
+        doubleTapScale={3}
+    />
+))
 
 const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
     let { profile, chatId }: any = route.params;
@@ -431,12 +440,12 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
                     <Pressable style={styles.btnCloseModal} onPress={() => setIsUpload(false)}>
                         <Text style={{ color: colors.white, fontSize: 30, lineHeight: 35 }}>&times;</Text>
                     </Pressable>
+                    {/* <Image source={{ uri: 'https://res.cloudinary.com/dfvtzc7kr/image/upload/v1735277638/uploads/329e61fb3cc160dedf16b38ce987e8b0.jpg' }} resizeMode="contain" style={{ width: '100%', height: '90%' }} /> */}
+                    {/* <Image source={{ uri: urlImage }} resizeMode="contain" style={{ width: '100%', height: '90%' }} /> */}
+                    <ContentImagePreview urlImage={urlImage} />
                     {Platform.OS === 'android' ? (
-                        <Image source={{ uri: urlImage }} resizeMode="contain" style={{ width: '100%', height: '90%' }} />
-                    ) : <Image source={{ uri: urlImage }} resizeMode="contain" style={{ width: '100%', height: '90%' }} />}
-                    {Platform.OS === 'android' ? (
-                        <View style={{ left: 0, right: 0, bottom: !showTabbar ? Dimensions.get('screen').height * 0.31 : 24, position: 'absolute', }}>
-                            <InputChat styleContainer={{ position: 'relative', zIndex: 999, backgroundColor: 'transparent', paddingBottom: 10 }} value={message} onChangeText={(value: string) => setMessage(value)} onSend={onSubmit} disabled={message.trim() === ''} />
+                        <View style={{ left: 0, right: 0, bottom: !showTabbar ? Dimensions.get('screen').height * 0.31 : 24, position: 'absolute', zIndex: 999 }}>
+                            <InputChat styleContainer={{ zIndex: 999, backgroundColor: 'transparent', paddingBottom: 10, position: 'relative' }} value={message} onChangeText={(value: string) => setMessage(value)} onSend={onSubmit} />
                         </View>
                     ) : (
                         <View style={{ width: '100%', flex: 1, position: 'absolute', top: 0, left: 0, bottom: 24, right: 0 }}>
@@ -446,11 +455,11 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
                             </KeyboardAvoidingView>
                         </View>
                     )}
-                    {isLoadingImage && (
+                    {/* {isLoadingImage && (
                         <View style={styles.overlay}>
                             <ActivityIndicator size="large" color={colors.primary} />
                         </View>
-                    )}
+                    )} */}
                 </ModalPreviewImage>
                 <ModalPreviewImage visible={previewImage} onRequestClose={() => {
                     setPreviewImage(false);
@@ -462,11 +471,7 @@ const ChatRoom = ({ navigation, route }: ChatRoomScreenTypes) => {
                     }}>
                         <Text style={{ color: colors.white, fontSize: 30, lineHeight: 35 }}>&times;</Text>
                     </Pressable>
-                    <ImageZoom
-                        uri={urlImage}
-                        resizeMode="contain"
-                        style={{ width: '100%', height: '90%' }}
-                    />
+                    <ContentImagePreview urlImage={urlImage} />
                 </ModalPreviewImage>
             </GestureHandlerRootView>
         </BottomSheetModalProvider>
@@ -548,7 +553,7 @@ const styles = StyleSheet.create({
     btnFloat: {
         position: 'absolute',
         zIndex: 50,
-        bottom: 50,
+        bottom: 70,
         right: 0,
         backgroundColor: colors.gray,
         paddingRight: 20,

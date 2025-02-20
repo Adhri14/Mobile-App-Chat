@@ -1,6 +1,6 @@
 import { useIsFocused } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { Animated, StyleSheet, Text, View } from "react-native";
 import { followUserAPI, getProfile, getProfileById, unFollowUserAPI } from "../api/user";
 import { colors } from "../assets/theme";
 import Button from "../components/Button";
@@ -9,6 +9,8 @@ import HeadStatisticProfile from "../components/HeadStatisticProfile";
 import { ProfileScreenTypes } from "../router";
 import { clearDataStorage } from "../utils/localStorage";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import LottieView from "lottie-react-native";
+import Loading from "../components/Loading";
 
 export type ProfileStateType = {
     fullName?: string;
@@ -23,7 +25,9 @@ export type ProfileStateType = {
 
 const Profile = ({ navigation, route }: ProfileScreenTypes) => {
     const { logout = false, userId = '' }: any = route.params;
+    const fadeAnim = useRef(new Animated.Value(1)).current;
     const isFocused = useIsFocused();
+    const [isLoading, setIsLoading] = useState(true);
     const [profile, setProfile] = useState<ProfileStateType>({
         fullName: '',
         username: '',
@@ -37,7 +41,6 @@ const Profile = ({ navigation, route }: ProfileScreenTypes) => {
     const [userLogin, setUserLogin] = useState('');
 
     useEffect(() => {
-        console.log('user : ', userId);
         if (isFocused) {
             if (userId !== '') {
                 getDataUser();
@@ -48,12 +51,20 @@ const Profile = ({ navigation, route }: ProfileScreenTypes) => {
                         ...res.data,
                         image: JSON.parse(res.data.image)
                     });
+                    setIsLoading(false);
                 }).catch(err => {
                     console.log(err);
+                    setIsLoading(false);
+                }).finally(() => {
+                    Animated.timing(fadeAnim, {
+                        toValue: 0,
+                        duration: 1000,
+                        useNativeDriver: true,
+                    }).start();
                 });
             }
         }
-    }, [isFocused, userId]);
+    }, [isFocused, userId, isLoading]);
 
     const getDataUser = () => {
         getProfileById(userId).then(res => {
@@ -62,13 +73,29 @@ const Profile = ({ navigation, route }: ProfileScreenTypes) => {
                 ...res.data,
                 image: JSON.parse(res.data.image)
             });
+            setIsLoading(false);
         }).catch(err => {
             console.log(err);
+            setIsLoading(false);
+        }).finally(() => {
+            Animated.timing(fadeAnim, {
+                toValue: 0,
+                duration: 1000,
+                useNativeDriver: true,
+            }).start();
         });
         getProfile().then(res => {
             setUserLogin(res.data._id);
+            setIsLoading(false);
         }).catch(err => {
             console.log(err);
+            setIsLoading(false);
+        }).finally(() => {
+            Animated.timing(fadeAnim, {
+                toValue: 0,
+                duration: 1000,
+                useNativeDriver: true,
+            }).start();
         });
     }
 
@@ -109,6 +136,7 @@ const Profile = ({ navigation, route }: ProfileScreenTypes) => {
 
     return (
         <View style={styles.page}>
+            <Loading fadeAnim={fadeAnim} isLoading={isLoading} />
             <Header isBack titleHeader={profile?.username || 'Akun'} color={colors.black} fontSizeTitle={16} onPress={() => navigation.goBack()} />
             <View style={styles.container}>
                 <HeadStatisticProfile
@@ -120,8 +148,10 @@ const Profile = ({ navigation, route }: ProfileScreenTypes) => {
                     onNavigate={onAction}
                     bio={profile?.bio}
                     logout={logout}
-                    isFollowing={Boolean(profile?.followers?.find(item => item === userLogin))}
+                    isFollowing={Boolean(profile?.followers?.find((item: any) => item._id === userLogin))}
                     onMessage={() => navigation.navigate('ChatRoom', { profile, chatId: '' })}
+                    onNavigateFollowers={() => navigation.navigate('ListUser', { username: profile?.username as string, initialRouteIndex: 0, userId: profile?._id as string })}
+                    onNavigateFollowing={() => navigation.navigate('ListUser', { username: profile?.username as string, initialRouteIndex: 1, userId: profile?._id as string })}
                 />
                 {Boolean(logout) && <Button style={[{ backgroundColor: 'red' }]} label="Keluar" onPress={onSignOut} />}
             </View>

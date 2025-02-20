@@ -1,11 +1,13 @@
 import React, { ReactNode } from "react";
-import { View, Modal, StyleSheet } from "react-native";
+import { View, Modal, StyleSheet, Dimensions } from "react-native";
 
 type ModalPreviewImageProps = {
     children: ReactNode;
     visible: boolean;
     onRequestClose: () => void;
 }
+
+const { width, height } = Dimensions.get('window');
 
 export default function ModalPreviewImage({ children, visible, onRequestClose }: ModalPreviewImageProps) {
     return (
@@ -23,9 +25,13 @@ const styles = StyleSheet.create({
         backgroundColor: 'black',
     },
     modal: {
-        flex: 1,
+        // flex: 1,
+        width,
+        height,
         backgroundColor: 'black',
         flexDirection: 'column',
         paddingTop: 40,
+        position: 'absolute',
+        // zIndex: 1,
     }
 });

@@ -15,12 +15,14 @@ type HeadStatisticProfileType = {
     bio?: string;
     onNavigate?: () => void;
     onMessage?: () => void;
+    onNavigateFollowers?: () => void;
+    onNavigateFollowing?: () => void;
     logout?: boolean;
     isFollowing?: boolean;
 }
 
 const HeadStatisticProfile = (props: HeadStatisticProfileType) => {
-    const { image, totalPosting, totalFollowers, totalFollowing, fullname, bio, onNavigate, logout = false, isFollowing = false, onMessage } = props;
+    const { image, totalPosting, totalFollowers, totalFollowing, fullname, bio, onNavigate, logout = false, isFollowing = false, onMessage, onNavigateFollowers, onNavigateFollowing } = props;
     return (
         <View style={styles.container}>
             <View style={styles.wrapperHeader}>
@@ -29,8 +31,8 @@ const HeadStatisticProfile = (props: HeadStatisticProfileType) => {
                 </View>
                 <View style={styles.statistic}>
                     {/* <StatisticCount total={totalPosting} label="postingan" /> */}
-                    <StatisticCount total={totalFollowers} label="pengikut" />
-                    <StatisticCount total={totalFollowing} label="mengikuti" />
+                    <StatisticCount total={totalFollowers} label="pengikut" onPress={onNavigateFollowers} />
+                    <StatisticCount total={totalFollowing} label="mengikuti" onPress={onNavigateFollowing} />
                 </View>
             </View>
             <Text style={styles.name}>{fullname}</Text>
